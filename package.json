@@ -27,13 +27,14 @@
     },
     "dependencies": {
         "minimist": "^1.2.5",
-        "nan": "^2.14.0"
+        "nan": "^2.14.0",
+        "typescript": "^5.4.5"
     },
     "os": [
         "!win32"
     ],
     "devDependencies": {
-        "tap": "^13.1.11",
-        "node-gyp": "^10.1.0"
+        "node-gyp": "^10.1.0",
+        "tap": "^13.1.11"
     }
 }
