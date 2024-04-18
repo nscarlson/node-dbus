@@ -26,15 +26,16 @@
         "build:debug": "node-gyp configure build --debug"
     },
     "dependencies": {
-        "minimist": "^1.2.5",
-        "nan": "^2.14.0",
-        "typescript": "^5.4.5"
+        "minimist": "1.2.5",
+        "nan": "2.19.0"
     },
     "os": [
         "!win32"
     ],
     "devDependencies": {
-        "node-gyp": "^10.1.0",
-        "tap": "^13.1.11"
+        "node-gyp": "10.1.0",
+        "source-map-support": "0.5.21",
+        "tap": "13.1.11",
+        "typescript": "5.4.5"
     }
 }
