@@ -1,5 +1,5 @@
-var DBus = require('../');
+var DBus = require('../')
 
-var bus = DBus.getBus('session');
+var bus = DBus.getBus('session')
 
-bus.setMaxMessageSize(5000000);
+bus.setMaxMessageSize(5000000)

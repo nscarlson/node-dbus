@@ -1,11 +1,14 @@
-var DBus = require('../');
+var DBus = require('../')
 
-var bus = DBus.getBus('session');
+var bus = DBus.getBus('session')
 
-bus.getInterface('nodejs.dbus.ExampleService', '/nodejs/dbus/ExampleService', 'nodejs.dbus.ExampleService.Interface1', function(err, iface) {
-
-	iface.on('pump', function(count) {
-		console.log(count);
-	});
-
-});
+bus.getInterface(
+    'nodejs.dbus.ExampleService',
+    '/nodejs/dbus/ExampleService',
+    'nodejs.dbus.ExampleService.Interface1',
+    function (err, iface) {
+        iface.on('pump', function (count) {
+            console.log(count)
+        })
+    },
+)
