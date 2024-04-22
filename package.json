@@ -17,7 +17,7 @@
     "engines": {
         "node": ">= 0.12.0"
     },
-    "main": "./lib/dbus",
+    "main": "lib/dbus",
     "scripts": {
         "node-gyp": "node_modules/.bin/node-gyp",
         "install": "npm run build:release",
@@ -35,7 +35,6 @@
     "devDependencies": {
         "node-gyp": "10.1.0",
         "source-map-support": "0.5.21",
-        "tap": "13.1.11",
-        "typescript": "5.4.5"
+        "tap": "^18.7.2"
     }
 }
