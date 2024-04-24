@@ -14,4 +14,5 @@ timeout.unref()
 tap.ok(
     'This is a dummy test. The real test is whether the tap.fail gets called on the timeout.',
 )
+
 bus.disconnect()
