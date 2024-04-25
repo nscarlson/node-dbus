@@ -36,7 +36,7 @@ declare module 'dbus' {
 
     export interface DBusInterface {
         getProperty(
-            name: string,
+            propertyName: string,
             callback: (err: typeof DBusError, name: string) => void,
         ): void
         setProperty(
