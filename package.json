@@ -21,7 +21,7 @@
     "scripts": {
         "node-gyp": "node_modules/.bin/node-gyp",
         "install": "npm run build:release",
-        "test": "jest",
+        "test": "jest --verbose",
         "build:release": "node-gyp configure build",
         "build:debug": "node-gyp configure build --debug"
     },
