@@ -49,23 +49,22 @@ describe('utils', () => {
             expect(mockCallback).toHaveBeenCalledTimes(arr.length)
         })
 
-        it('catches thrown errors', () => {
+        it('appends thrown callback err message', () => {
+            const errorMessage = 'test error'
+
             const mockCallbackThrows = jest.fn((value) => {
                 throw new Error('test error')
             })
 
             const arr = [1, 2, 3, 4]
 
-            const forEachAsync = () =>
+            expect(() =>
                 utils.ForEachAsync(
                     arr,
                     mockCallbackThrows,
                     (isComplete: boolean) => isComplete,
-                )
-
-            expect(() => {
-                throw new Error('booyah')
-            }).toThrow(Error)
+                ),
+            ).toThrowError(`ForEachAsync: ${errorMessage}`)
         })
     })
 })
