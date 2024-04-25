@@ -44,6 +44,9 @@ build/lib
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
+# node-gyp build artifacts
+build/Makefile
+
 # Dependency directories
 node_modules/
 jspm_packages/
