@@ -59,14 +59,16 @@ export default class Bus extends EventEmitter {
         // Register signal handler of this connection
         this.DBus.signalHandlers[this.connection.uniqueName] = this
         this.DBus.enableSignal()
+
+        this.interfaces = {}
     }
     _dbus
     connection: any
     DBus: any
     busName: 'system' | 'session'
-    signalHandlers = {}
+    signalHandlers: Record<string, any>
     signalEnable: boolean
-    interfaces = {}
+    interfaces: Record<string, any>
 
     get connected() {
         return this.connection !== null
@@ -91,7 +93,7 @@ export default class Bus extends EventEmitter {
             this._dbus.releaseBus(this.connection)
         }
 
-        switch (this.name) {
+        switch (this.busName) {
             case 'system':
                 this.connection = this._dbus.getBus(0)
                 break
@@ -188,7 +190,7 @@ export default class Bus extends EventEmitter {
             return
         }
 
-        this.introspect(serviceName, objectPath, function (err, obj) {
+        this.introspect(serviceName, objectPath, (err, obj) => {
             if (err) {
                 if (callback) {
                     callback(err)
@@ -219,19 +221,21 @@ export default class Bus extends EventEmitter {
                     serviceName + ':' + objectPath + ':' + interfaceName
                 ] = iface
 
-                if (callback) callback(null, iface)
+                if (callback) {
+                    callback(null, iface)
+                }
             })
         })
     }
 
     registerSignalHandler = (
-        serviceName,
-        objectPath,
-        interfaceName,
-        interfaceObj,
-        callback?: () => any,
+        serviceName: string,
+        objectPath: string,
+        interfaceName: string,
+        interfaceObj: Record<string, any>,
+        callback?: (...args: any) => any,
     ) => {
-        this.getUniqueServiceName(serviceName, function (err, uniqueName) {
+        this.getUniqueServiceName(serviceName, (err, uniqueName) => {
             // Make a hash
             const signalHash = objectPath + ':' + interfaceName
             this.signalHandlers[signalHash] = interfaceObj
@@ -246,11 +250,14 @@ export default class Bus extends EventEmitter {
         })
     }
 
-    setMaxMessageSize = (size) => {
+    setMaxMessageSize = (size: number) => {
         this._dbus.setMaxMessageSize(this.connection, size || 1024000)
     }
 
-    getUniqueServiceName = (serviceName, callback) => {
+    getUniqueServiceName = (
+        serviceName: string,
+        callback: (...args: any) => any,
+    ) => {
         this.callMethod(
             this.connection,
             'org.freedesktop.DBus',
@@ -260,13 +267,18 @@ export default class Bus extends EventEmitter {
             's',
             -1,
             [serviceName],
-            (err, uniqueName) => {
+            (err: any, uniqueName: string) => {
                 callback(err, uniqueName)
             },
         )
     }
 
-    addSignalFilter = (sender, objectPath, interfaceName, callback) => {
+    addSignalFilter = (
+        sender: string,
+        objectPath: string,
+        interfaceName: string,
+        callback?: (...args: any) => any,
+    ) => {
         // Initializing signal if it wasn't enabled before
         if (!this.signalEnable) {
             this.signalEnable = true
@@ -289,21 +301,21 @@ export default class Bus extends EventEmitter {
         })
     }
 
-    _sendMessageReply = (message, value, type) => {
+    _sendMessageReply = (message: any, value: any, type: any) => {
         this._dbus.sendMessageReply(message, value, type)
     }
 
-    _sendErrorMessageReply = (message, name, msg) => {
+    _sendErrorMessageReply = (message: any, name: any, msg: any) => {
         this._dbus.sendErrorMessageReply(message, name, msg)
     }
 
-    createError = (name, message) => {
+    createError = (name: string, message: string) => {
         return new DBusError(name, message)
     }
 
     callMethod = (...args: any) => {
         args.push(this.createError)
 
-        this._dbus.callMethod.apply(this, args)
+        this._dbus.callMethod(args)
     }
 }

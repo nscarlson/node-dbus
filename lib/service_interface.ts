@@ -2,10 +2,15 @@ import EventEmitter from 'node:events'
 import Utils from './utils'
 import { defineType } from 'dbus'
 
+type Handler = (...args: any) => any
+
+type MethodOptions = {
+    in?: { name: string; type: string }[]
+    out?: { name: string; type: string }[]
+}
 type MethodObject = {
-    handler: (res: any, obj: any) => void
-    in?: string | string[]
-    out: string | string[]
+    handler: Handler
+    opts: MethodOption
 }
 
 export default class ServiceInterface extends EventEmitter {
@@ -27,29 +32,28 @@ export default class ServiceInterface extends EventEmitter {
     properties
     signals
 
-    addMethod = (method: string, opts, handler) => {
-        const _opts = opts || {}
-
-        var methodObj = {
-            handler: handler,
+    addMethod = (methodName: string, opts: MethodOptions, handler: Handler) => {
+        let methodObj = {
+            handler,
         }
 
-        if (_opts['in']) {
+        if (opts?.in?.length) {
             var argSignature = []
-            for (var index in _opts['in']) {
-                argSignature.push(_opts['in'][index])
+
+            for (const index in opts?.in) {
+                argSignature.push(opts?.in?.[index])
             }
 
             if (argSignature.length) {
-                methodObj['in'] = argSignature
+                methodObj.in = argSignature
             }
         }
 
-        if (_opts['out']) {
-            methodObj['out'] = _opts['out']
+        if (opts.out) {
+            methodObj.out = opts.out
         }
 
-        this.methods[method] = methodObj
+        this.methods[methodName] = methodObj
 
         return this
     }

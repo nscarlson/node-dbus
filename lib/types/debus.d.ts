@@ -75,7 +75,10 @@ declare module 'dbus' {
     export interface DBusServiceInterface {
         addMethod(
             method: string,
-            opts: { in?: string | string[]; out: string | string[] },
+            opts: {
+                in?: { name: string; type: string }[]
+                out?: { name: string; type: string }[]
+            },
             handler: (res: any, obj: any) => void,
         ): void
         addProperty(

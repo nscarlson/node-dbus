@@ -24,18 +24,20 @@ export default class Interface extends EventEmitter {
     interfaceName: string
     object: Record<string, any>
 
-    connected = () => this.bus.connected
+    get connected() {
+        return this.bus.connected
+    }
 
-    init = (callback: (args: any) => any) => {
+    init = (callback: (...args: any) => any) => {
         // Initializing methods
         for (const methodName in this.object['method']) {
-            this[methodName] = (function (method, signature) {
-                return function () {
+            this[methodName] = ((method, signature) => {
+                return () => {
                     var allArgs = Array.prototype.slice.call(arguments)
                     var interfaceIn = this.object.method[method].in
                     var dbusArgs = allArgs.slice(0, interfaceIn.length)
                     var restArgs = allArgs.slice(interfaceIn.length)
-                    var options = restArgs[0]
+                    var options = restArgs?.[0] || {}
                     var callback = restArgs[1]
 
                     if (typeof options === 'function') {
@@ -44,17 +46,15 @@ export default class Interface extends EventEmitter {
                         options = {}
                     }
 
-                    if (!options) {
-                        options = {}
-                    }
                     if (!callback) {
-                        callback = function () {}
+                        callback = () => {}
                     }
-                    var timeout = options.timeout || -1
-                    var handler = this[method].finish || null
-                    var error = this[method].error || null
 
-                    process.nextTick(function () {
+                    const timeout = options.timeout || -1
+                    const handler = this[method].finish || null
+                    const error = this[method].error || null
+
+                    process.nextTick(() => {
                         if (!this.connected) {
                             callback(new Error('Bus is no longer connected'))
                             return
@@ -106,7 +106,7 @@ export default class Interface extends EventEmitter {
         }
     }
 
-    getProperties = (callback) => {
+    getProperties = (callback: (...args: any) => any) => {
         if (!this.connected) {
             process.nextTick(function () {
                 callback(new Error('Bus is no longer connected'))
@@ -123,7 +123,7 @@ export default class Interface extends EventEmitter {
             's',
             -1,
             [this.interfaceName],
-            (err, value) => {
+            (err: any, value) => {
                 if (callback) {
                     callback(err, value)
                 }
@@ -148,7 +148,7 @@ export default class Interface extends EventEmitter {
             'ss',
             10000,
             [this.interfaceName, propertyName],
-            (err, value: any) => {
+            (err: any, value: any) => {
                 if (callback) {
                     callback(err, value)
                 }
@@ -180,7 +180,7 @@ export default class Interface extends EventEmitter {
             { type: 'ssv', concrete_type: 'ss' + propSig },
             -1,
             [this.interfaceName, propertyName, value],
-            (err) => {
+            (err: any) => {
                 if (callback) {
                     callback(err)
                 }
