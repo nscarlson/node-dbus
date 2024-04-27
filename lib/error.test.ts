@@ -1,8 +1,6 @@
 import { describe, expect, it } from '@jest/globals'
 import DBusError from './error'
 
-const DBus = require('../')
-
 const baseError = new DBusError(
     'test.dbus.TestService.BaseError',
     'Basic error',
