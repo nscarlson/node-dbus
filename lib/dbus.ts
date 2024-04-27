@@ -111,14 +111,4 @@ export default class DBus {
     }
 
     Signature = Utils.Signature
-
-    // /* Deprecated */
-    // DBus.prototype.getBus = function (busName) {
-    //     return DBus.getBus(busName)
-    // }
-
-    // /* Deprecated */
-    // DBus.prototype.registerService = function (busName, serviceName) {
-    //     return DBus.registerService(busName, serviceName)
-    // }
 }
