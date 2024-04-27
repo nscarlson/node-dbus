@@ -54,7 +54,7 @@ declare module 'dbus' {
         /**
          * ...args
          * options: {timeout: number}
-         * callback: (err: DBusError|undefined, res: any)=>void
+         * callback: (err: DBusError | undefined, res: any) => void
          */
         [methodName: string]: (...args: any[]) => void
     }

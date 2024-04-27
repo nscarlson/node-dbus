@@ -146,7 +146,7 @@ export default class Bus extends EventEmitter {
             '',
             10000,
             [],
-            (err: any, introspect: any) => {
+            (err: DBusError, introspect: any) => {
                 const obj = this._parseIntrospectSource(introspect)
 
                 if (!obj) {
@@ -265,7 +265,7 @@ export default class Bus extends EventEmitter {
             's',
             -1,
             [serviceName],
-            (err: any, uniqueName: string) => {
+            (err: DBusError, uniqueName: string) => {
                 callback(err, uniqueName)
             },
         )
