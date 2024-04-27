@@ -3,6 +3,7 @@
 // Definitions by: Luca Lindhorst <https://github.com/lal12>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 declare module 'dbus' {
+    export type DBusError = Error
     export type busType = 'session' | 'system'
     export type defineType =
         | 'Auto'
@@ -29,7 +30,7 @@ declare module 'dbus' {
             serviceName: string,
             objectPath: string,
             interfaceName: string,
-            callback: (err: typeof DBusError, iface: DBusInterface) => void,
+            callback: (err: DBusError, iface: DBusInterface) => void,
         ): void
         disconnect(): void
     }
@@ -37,16 +38,16 @@ declare module 'dbus' {
     export interface DBusInterface {
         getProperty(
             propertyName: string,
-            callback: (err: typeof DBusError, name: string) => void,
+            callback: (err: DBusError, name: string) => void,
         ): void
         setProperty(
             name: string,
             value: any,
-            callback: (err: typeof DBusError) => void,
+            callback: (err: DBusError) => void,
         ): void
         getProperties(
             callback: (
-                err: typeof DBusError,
+                err: DBusError,
                 properties: Array<{ [name: string]: any }>,
             ) => void,
         ): void
@@ -68,10 +69,7 @@ declare module 'dbus' {
         createInterface(name: string): DBusServiceInterface
     }
 
-    export type PropsCB = (
-        err: typeof DBusError | undefined,
-        value: any,
-    ) => void
+    export type PropsCB = (err: DBusError, value: any) => void
     export interface DBusServiceInterface {
         addMethod(
             method: string,

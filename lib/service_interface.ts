@@ -1,6 +1,10 @@
 import EventEmitter from 'node:events'
 import Utils from './utils'
 import { defineType } from 'dbus'
+import DBusError from './error'
+import ServiceObject from './service_object'
+
+type Callback = (...args: any) => any
 
 type Handler = (...args: any) => any
 
@@ -8,18 +12,13 @@ type MethodOptions = {
     in?: { name: string; type: string }[]
     out?: { name: string; type: string }[]
 }
-type MethodObject = {
-    handler: Handler
-    opts: MethodOption
-}
-
 export default class ServiceInterface extends EventEmitter {
-    constructor(object, interfaceName) {
+    constructor(object: ServiceObject, interfaceName: string) {
         super()
 
         this.object = object
         this.name = interfaceName
-        this.introspection = null
+        this.introspection = []
         this.methods = {}
         this.properties = {}
         this.signals = {}
@@ -27,21 +26,23 @@ export default class ServiceInterface extends EventEmitter {
 
     object: Record<string, any>
     name: string
-    introspection: string
+    introspection: string | (string | string[])[]
     methods: Record<string, any>
-    properties
-    signals
+    properties: Record<string, any>
+    signals: Record<string, any>
 
-    addMethod = (methodName: string, opts: MethodOptions, handler: Handler) => {
-        let methodObj = {
+    addMethod = (methodName: string, opts: any, handler: Handler) => {
+        let methodObj: Record<string, any> = {
             handler,
         }
 
         if (opts?.in?.length) {
-            var argSignature = []
+            var argSignature: string[] = []
 
-            for (const index in opts?.in) {
-                argSignature.push(opts?.in?.[index])
+            for (const opt of opts.in) {
+                for (const index in opt) {
+                    argSignature.push(opt?.[index])
+                }
             }
 
             if (argSignature.length) {
@@ -58,7 +59,7 @@ export default class ServiceInterface extends EventEmitter {
         return this
     }
 
-    addProperty = (propName: string, opts) => {
+    addProperty = (propName: string, opts: any) => {
         var _opts = opts || {}
         var propObj = {
             access: 'read',
@@ -76,39 +77,41 @@ export default class ServiceInterface extends EventEmitter {
         return this
     }
 
-    addSignal = (signalName, opts) => {
+    addSignal = (signalName: string, opts: any) => {
         if (!opts) {
             return
         }
 
-        self.signals[signalName] = opts
+        this.signals[signalName] = opts
 
-        self.on(signalName, function () {
-            var args = [signalName].concat(
-                Array.prototype.slice.call(arguments),
-            )
-            self.emitSignal.apply(this, args)
+        this.on(signalName, () => {
+            var args = [signalName].concat([signalName, opts])
+
+            this.emitSignal.apply(this, args)
         })
 
-        return self
+        return this
     }
 
-    call = (method, message, args) => {
-        var member = self.methods[method]
+    call = (method: string, message: string, args: any) => {
+        var member = this.methods[method]
+
         if (!member) {
-            self.object.service.bus._sendErrorMessageReply(
+            this.object.service.bus._sendErrorMessageReply(
                 message,
                 'org.freedesktop.DBus.Error.UnknownMethod',
             )
             return
         }
 
-        var inArgs = member['in'] || []
+        var inArgs = member.in || []
+
         if (inArgs.length != args.length) {
-            self.object.service.bus._sendErrorMessageReply(
+            this.object.service.bus._sendErrorMessageReply(
                 message,
                 'org.freedesktop.DBus.Error.InvalidArgs',
             )
+
             return
         }
 
@@ -116,24 +119,26 @@ export default class ServiceInterface extends EventEmitter {
 
         if (typeof member.out === 'function') {
             // allow interfaces such as 'org.freedesktop.DBus.Properties' to return out definition according arguments
-            type = member.out.apply(this, [self.name, method, args]).type
+            type = member.out.apply(this, [this.name, method, args]).type
         } else if (member.out) {
             type = member.out.type || ''
         }
 
         // Preparing callback
         args = Array.prototype.slice.call(args).concat([
-            function (err, value) {
+            (err: DBusError, value: any) => {
                 // Error handling
                 if (err) {
                     var errorName = 'org.freedesktop.DBus.Error.Failed'
                     var errorMessage = err.toString()
-                    if (err instanceof Error) {
+
+                    if (err instanceof DBusError) {
                         errorMessage = err.message
                         errorName =
                             err.dbusName || 'org.freedesktop.DBus.Error.Failed'
                     }
-                    self.object.service.bus._sendErrorMessageReply(
+
+                    this.object.service.bus._sendErrorMessageReply(
                         message,
                         errorName,
                         errorMessage,
@@ -142,14 +147,14 @@ export default class ServiceInterface extends EventEmitter {
                     return
                 }
 
-                self.object.service.bus._sendMessageReply(message, value, type)
+                this.object.service.bus._sendMessageReply(message, value, type)
             },
         ])
 
         member.handler.apply(this, args)
     }
 
-    getProperty = (propName: string, callback) => {
+    getProperty = (propName: string, callback: Callback) => {
         var prop = this.properties[propName]
 
         if (!prop) {
@@ -157,8 +162,10 @@ export default class ServiceInterface extends EventEmitter {
         }
 
         prop.getter.apply(this, [
-            function (err, value) {
-                if (callback) callback(err, value)
+            (err: DBusError, value: any) => {
+                if (callback) {
+                    callback(err, value)
+                }
             },
         ])
 
@@ -166,7 +173,7 @@ export default class ServiceInterface extends EventEmitter {
     }
 
     update = () => {
-        var introspection = []
+        let introspection: string[] = []
 
         introspection.push('<interface name="' + this.name + '">')
 
@@ -177,8 +184,8 @@ export default class ServiceInterface extends EventEmitter {
             introspection.push('<method name="' + methodName + '">')
 
             // Arguments
-            for (const index in method['in']) {
-                let arg = method['in'][index]
+            for (const index in method.in) {
+                let arg = method.in[index]
 
                 if (typeof arg === 'function') {
                     arg = arg.apply(this, [this.name, method, []])
@@ -198,8 +205,8 @@ export default class ServiceInterface extends EventEmitter {
                     )
             }
 
-            if (method['out']) {
-                var out_def = method['out']
+            if (method.out) {
+                var out_def = method.out
 
                 if (typeof out_def === 'function') {
                     out_def = out_def.apply(this, [this.name, method, []])
@@ -264,13 +271,13 @@ export default class ServiceInterface extends EventEmitter {
 
         introspection.push('</interface>')
 
-        this.introspection = introspection.join('\n')
+        this.introspection = introspection.join('\n') as string
 
         return this
     }
 
-    setProperty = (propName, value, callback) => {
-        const prop = self.properties[propName]
+    setProperty = (propName: string, value: any, callback: Callback) => {
+        const prop = this.properties[propName]
 
         if (!prop) {
             return false
@@ -278,7 +285,7 @@ export default class ServiceInterface extends EventEmitter {
 
         var args = [value]
 
-        args.push(function (err) {
+        args.push((err: DBusError) => {
             // Completed
             callback(err)
         })
@@ -288,35 +295,39 @@ export default class ServiceInterface extends EventEmitter {
         return true
     }
 
-    getProperties = (callback) => {
-        var properties = {}
+    getProperties = (callback: Callback) => {
+        let properties: Record<string, any> = {}
 
-        var props = Object.keys(self.properties)
+        var props = Object.keys(this.properties)
 
         Utils.ForEachAsync(
             props,
-            (propName, index, arr, next) => {
+            (propName: string, index: number, arr: any[], next: Callback) => {
                 // Getting property
-                var prop = self.properties[propName]
-                prop.getter(function (err, value) {
+                var prop = this.properties[propName]
+
+                prop.getter((err: DBusError, value: any) => {
                     if (err) {
                         // TODO: What do we do if a property throws an error?
                         // For now, just skip the property?
                         return next()
                     }
                     properties[propName] = value
+
                     next()
                 })
 
                 return true
             },
-            function () {
-                if (callback) callback(null, properties)
+            () => {
+                if (callback) {
+                    callback(null, properties)
+                }
             },
         )
     }
 
-    emitSignal = () => {
+    emitSignal = (...args: any) => {
         const service = this.object.service
 
         if (!service.connected) {
@@ -326,15 +337,20 @@ export default class ServiceInterface extends EventEmitter {
         var conn = this.object.service.bus.connection
         var objPath = this.object.path
         var interfaceName = this.name
-        var signalName = arguments[0]
+        var signalName = args[0]
 
-        var args = Array.prototype.slice.call(arguments)
+        // var args = Array.prototype.slice.call(arguments)
+
         args.splice(0, 1)
 
         var signal = this.signals[signalName] || null
-        if (!signal) return
 
-        var signatures = []
+        if (!signal) {
+            return
+        }
+
+        var signatures: string[] = []
+
         for (var index in signal.types) {
             signatures.push(signal.types[index].type)
         }

@@ -1,4 +1,5 @@
 var DBus = require('../')
+const DBusError = require('../lib/error')
 
 // Create a new service, object and interface
 var service = DBus.registerService('session', 'nodejs.dbus.ExampleService')
@@ -19,10 +20,7 @@ iface1.addMethod(
     { out: DBus.Define(String) },
     function (callback) {
         callback(
-            new DBus.Error(
-                'nodejs.dbus.ExampleService.ErrorTest',
-                'Some error',
-            ),
+            new DBusError('nodejs.dbus.ExampleService.ErrorTest', 'Some error'),
         )
     },
 )

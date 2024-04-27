@@ -4,6 +4,7 @@ import DBusError from './error'
 import DBus from './dbus'
 
 type BusName = 'session' | 'system'
+type Callback = (...args: any) => any
 
 export default class Bus extends EventEmitter {
     constructor(_dbus: any, dbus: DBus, busName: BusName) {
@@ -74,7 +75,7 @@ export default class Bus extends EventEmitter {
         return this.connection !== null
     }
 
-    disconnect = (callback?: (...args: any) => any) => {
+    disconnect = (callback?: Callback) => {
         delete this.DBus.signalHandlers[this.connection.uniqueName]
 
         this._dbus.releaseBus(this.connection)
@@ -86,7 +87,7 @@ export default class Bus extends EventEmitter {
         }
     }
 
-    reconnect = (callback?: () => any) => {
+    reconnect = (callback?: Callback) => {
         if (this.connection) {
             delete this.DBus.signalHandlers[this.connection.uniqueName]
 
@@ -125,7 +126,7 @@ export default class Bus extends EventEmitter {
     introspect = (
         serviceName: string,
         objectPath: string,
-        callback: (...args: any) => any,
+        callback: Callback,
     ) => {
         if (!this.connected) {
             process.nextTick(function () {
@@ -170,7 +171,7 @@ export default class Bus extends EventEmitter {
         serviceName: string,
         objectPath: string,
         interfaceName: string,
-        callback: (...args: any) => any,
+        callback: Callback,
     ) => {
         if (
             this.interfaces[
@@ -233,7 +234,7 @@ export default class Bus extends EventEmitter {
         objectPath: string,
         interfaceName: string,
         interfaceObj: Record<string, any>,
-        callback?: (...args: any) => any,
+        callback?: Callback,
     ) => {
         this.getUniqueServiceName(serviceName, (err, uniqueName) => {
             // Make a hash
@@ -254,10 +255,7 @@ export default class Bus extends EventEmitter {
         this._dbus.setMaxMessageSize(this.connection, size || 1024000)
     }
 
-    getUniqueServiceName = (
-        serviceName: string,
-        callback: (...args: any) => any,
-    ) => {
+    getUniqueServiceName = (serviceName: string, callback: Callback) => {
         this.callMethod(
             this.connection,
             'org.freedesktop.DBus',
@@ -277,7 +275,7 @@ export default class Bus extends EventEmitter {
         sender: string,
         objectPath: string,
         interfaceName: string,
-        callback?: (...args: any) => any,
+        callback?: Callback,
     ) => {
         // Initializing signal if it wasn't enabled before
         if (!this.signalEnable) {
