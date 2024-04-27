@@ -8,10 +8,6 @@ type Callback = (...args: any) => any
 
 type Handler = (...args: any) => any
 
-type MethodOptions = {
-    in?: { name: string; type: string }[]
-    out?: { name: string; type: string }[]
-}
 export default class ServiceInterface extends EventEmitter {
     constructor(object: ServiceObject, interfaceName: string) {
         super()
