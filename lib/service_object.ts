@@ -1,7 +1,7 @@
 import Service from './service'
 import ServiceInterface from './service_interface'
 
-var Utils = require('./utils')
+const Utils = require('./utils')
 
 export default class ServiceObject {
     constructor(service: Service, objectPath: string) {
@@ -38,7 +38,7 @@ export default class ServiceObject {
                 out: this.DefineByPropName('value'),
             },
             (interfaceName, propName, callback) => {
-                var iface = this.interfaces[interfaceName]
+                const iface = this.interfaces[interfaceName]
 
                 if (!iface) {
                     callback(new Error("Doesn't support such property"))
@@ -60,7 +60,7 @@ export default class ServiceObject {
                 ],
             },
             (interfaceName, propName, value, callback) => {
-                var iface = this.interfaces[interfaceName]
+                const iface = this.interfaces[interfaceName]
 
                 if (!iface) {
                     callback(new Error("Doesn't support such property"))
@@ -79,7 +79,8 @@ export default class ServiceObject {
                 out: Utils.Define(Object, 'properties'),
             },
             (interfaceName, callback) => {
-                var iface = this.interfaces[interfaceName]
+                const iface = this.interfaces[interfaceName]
+
                 if (!iface) {
                     callback(new Error("Doesn't have any properties"))
                     return
@@ -190,18 +191,18 @@ export default class ServiceObject {
     }
 
     updateIntrospection = () => {
-        var introspection: (string[] | string)[] = [
+        const introspection: (string[] | string)[] = [
             '<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"',
             '"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">',
             '<node name="' + this.path + '">',
         ]
 
-        for (var interfaceName in this.interfaces) {
+        for (const interfaceName in this.interfaces) {
             const iface = this.interfaces[interfaceName]
             introspection.push(iface.introspection as string[])
         }
 
-        var childNodes = this.buildChildNodes()
+        const childNodes = this.buildChildNodes()
 
         for (let i = 0; i < childNodes.length; i++) {
             introspection.push('<node name="' + childNodes[i] + '"/>')

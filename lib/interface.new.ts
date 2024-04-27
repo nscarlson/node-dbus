@@ -38,12 +38,12 @@ export default class Interface extends EventEmitter {
         for (const methodName in this.object['method']) {
             this.methods[methodName] = ((method, signature) => {
                 return () => {
-                    var allArgs = Array.prototype.slice.call(arguments)
-                    var interfaceIn = this.object.method[method].in
-                    var dbusArgs = allArgs.slice(0, interfaceIn.length)
-                    var restArgs = allArgs.slice(interfaceIn.length)
-                    var options = restArgs?.[0] || {}
-                    var callback = restArgs[1]
+                    const allArgs = Array.prototype.slice.call(arguments)
+                    const interfaceIn = this.object.method[method].in
+                    const dbusArgs = allArgs.slice(0, interfaceIn.length)
+                    const restArgs = allArgs.slice(interfaceIn.length)
+                    let options = restArgs?.[0] || {}
+                    let callback = restArgs[1]
 
                     if (typeof options === 'function') {
                         // No options were specified; only a callback.
@@ -89,7 +89,8 @@ export default class Interface extends EventEmitter {
         }
 
         // Initializing signal handler
-        var signals = Object.keys(this.object['signal'])
+        const signals = Object.keys(this.object['signal'])
+
         if (signals.length) {
             this.bus.registerSignalHandler(
                 this.serviceName,
@@ -174,7 +175,7 @@ export default class Interface extends EventEmitter {
             return
         }
 
-        var propSig = this.object['property'][propertyName].type
+        const propSig = this.object['property'][propertyName].type
 
         this.bus.callMethod(
             this.bus.connection,

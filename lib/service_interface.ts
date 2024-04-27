@@ -37,7 +37,7 @@ export default class ServiceInterface extends EventEmitter {
         }
 
         if (opts?.in?.length) {
-            var argSignature: string[] = []
+            const argSignature: string[] = []
 
             for (const opt of opts.in) {
                 for (const index in opt) {
@@ -60,8 +60,9 @@ export default class ServiceInterface extends EventEmitter {
     }
 
     addProperty = (propName: string, opts: any) => {
-        var _opts = opts || {}
-        var propObj = {
+        const _opts = opts || {}
+
+        const propObj = {
             access: 'read',
             type: opts.type || 'v',
             getter: opts.getter || null,
@@ -85,7 +86,7 @@ export default class ServiceInterface extends EventEmitter {
         this.signals[signalName] = opts
 
         this.on(signalName, () => {
-            var args = [signalName].concat([signalName, opts])
+            const args = [signalName].concat([signalName, opts])
 
             this.emitSignal.apply(this, args)
         })
@@ -94,7 +95,7 @@ export default class ServiceInterface extends EventEmitter {
     }
 
     call = (method: string, message: string, args: any) => {
-        var member = this.methods[method]
+        const member = this.methods[method]
 
         if (!member) {
             this.object.service.bus._sendErrorMessageReply(
@@ -104,7 +105,7 @@ export default class ServiceInterface extends EventEmitter {
             return
         }
 
-        var inArgs = member.in || []
+        const inArgs = member.in || []
 
         if (inArgs.length != args.length) {
             this.object.service.bus._sendErrorMessageReply(
@@ -129,8 +130,8 @@ export default class ServiceInterface extends EventEmitter {
             (err: DBusError, value: any) => {
                 // Error handling
                 if (err) {
-                    var errorName = 'org.freedesktop.DBus.Error.Failed'
-                    var errorMessage = err.toString()
+                    let errorName = 'org.freedesktop.DBus.Error.Failed'
+                    let errorMessage = err.toString()
 
                     if (err instanceof DBusError) {
                         errorMessage = err.message
@@ -155,7 +156,7 @@ export default class ServiceInterface extends EventEmitter {
     }
 
     getProperty = (propName: string, callback: Callback) => {
-        var prop = this.properties[propName]
+        let prop = this.properties[propName]
 
         if (!prop) {
             return false
@@ -178,8 +179,8 @@ export default class ServiceInterface extends EventEmitter {
         introspection.push('<interface name="' + this.name + '">')
 
         // Methods
-        for (var methodName in this.methods) {
-            var method = this.methods[methodName]
+        for (const methodName in this.methods) {
+            const method = this.methods[methodName]
 
             introspection.push('<method name="' + methodName + '">')
 
@@ -206,7 +207,7 @@ export default class ServiceInterface extends EventEmitter {
             }
 
             if (method.out) {
-                var out_def = method.out
+                let out_def = method.out
 
                 if (typeof out_def === 'function') {
                     out_def = out_def.apply(this, [this.name, method, []])
@@ -230,8 +231,8 @@ export default class ServiceInterface extends EventEmitter {
         }
 
         // Properties
-        for (var propName in this.properties) {
-            var property = this.properties[propName]
+        for (const propName in this.properties) {
+            const property = this.properties[propName]
 
             introspection.push(
                 '<property name="' +
@@ -245,15 +246,15 @@ export default class ServiceInterface extends EventEmitter {
         }
 
         // Signal
-        for (var signalName in this.signals) {
-            var signal = this.signals[signalName]
+        for (const signalName in this.signals) {
+            const signal = this.signals[signalName]
 
             introspection.push('<signal name="' + signalName + '">')
 
             // Arguments
             if (signal.types) {
-                for (var index in signal.types) {
-                    var arg = signal.types[index]
+                for (const index in signal.types) {
+                    const arg = signal.types[index]
                     if (arg.name)
                         introspection.push(
                             '<arg type="' +
@@ -283,7 +284,7 @@ export default class ServiceInterface extends EventEmitter {
             return false
         }
 
-        var args = [value]
+        const args = [value]
 
         args.push((err: DBusError) => {
             // Completed
@@ -298,13 +299,13 @@ export default class ServiceInterface extends EventEmitter {
     getProperties = (callback: Callback) => {
         let properties: Record<string, any> = {}
 
-        var props = Object.keys(this.properties)
+        const props = Object.keys(this.properties)
 
         Utils.ForEachAsync(
             props,
             (propName: string, index: number, arr: any[], next: Callback) => {
                 // Getting property
-                var prop = this.properties[propName]
+                const prop = this.properties[propName]
 
                 prop.getter((err: DBusError, value: any) => {
                     if (err) {
@@ -334,24 +335,24 @@ export default class ServiceInterface extends EventEmitter {
             throw new Error('Service is no longer connected')
         }
 
-        var conn = this.object.service.bus.connection
-        var objPath = this.object.path
-        var interfaceName = this.name
-        var signalName = args[0]
+        const conn = this.object.service.bus.connection
+        const objPath = this.object.path
+        const interfaceName = this.name
+        const signalName = args[0]
 
-        // var args = Array.prototype.slice.call(arguments)
+        // const args = Array.prototype.slice.call(arguments)
 
         args.splice(0, 1)
 
-        var signal = this.signals[signalName] || null
+        const signal = this.signals[signalName] || null
 
         if (!signal) {
             return
         }
 
-        var signatures: string[] = []
+        const signatures: string[] = []
 
-        for (var index in signal.types) {
+        for (const index in signal.types) {
             signatures.push(signal.types[index].type)
         }
 

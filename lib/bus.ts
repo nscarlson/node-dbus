@@ -209,7 +209,7 @@ export default class Bus extends EventEmitter {
             }
 
             // Create a interface object based on introspect
-            var iface = new Interface(
+            const iface = new Interface(
                 this,
                 serviceName,
                 objectPath,
