@@ -83,11 +83,6 @@ export default class DBus {
                 continue
             }
 
-            // Fire event
-            // const newArgs = ['request'].concat(
-            //     Array.prototype.slice.call(arguments),
-            // )
-
             const newArgs = [
                 'request',
                 uniqueName,
