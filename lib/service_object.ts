@@ -1,5 +1,3 @@
-'use strict'
-
 import Service from './service'
 import ServiceInterface from './service_interface'
 
@@ -87,7 +85,7 @@ export default class ServiceObject {
                     return
                 }
 
-                iface.getProperties(function (err, props) {
+                iface.getProperties((err, props) => {
                     callback(err, props)
                 })
             },
@@ -113,7 +111,7 @@ export default class ServiceObject {
 
     buildChildNodes = () => {
         const unique = (arr: any[]) => {
-            var t: Record<number, boolean> = {}
+            const t: Record<number, boolean> = {}
 
             for (let i = 0; i < arr.length; i++) {
                 t[arr[i]] = true
@@ -122,24 +120,24 @@ export default class ServiceObject {
             return Object.keys(t)
         }
 
-        var prefix = this.path + '/'
-        var allKeys = Object.keys(this.service.objects)
+        const prefix = this.path + '/'
+        const allKeys = Object.keys(this.service.objects)
 
-        var childKeys = allKeys.filter(
+        const childKeys = allKeys.filter(
             (key) =>
                 key.substring(0, prefix.length) == prefix &&
                 key.length > prefix.length,
         )
 
-        var unprefixedChildKeys = childKeys.map((key) => {
+        const unprefixedChildKeys = childKeys.map((key) => {
             return key.substring(prefix.length)
         })
 
-        var childNodes = unprefixedChildKeys.map((key) => {
+        const childNodes = unprefixedChildKeys.map((key) => {
             return key.split('/')[0]
         })
 
-        var uniqueChildNodes = unique(childNodes)
+        const uniqueChildNodes = unique(childNodes)
 
         return uniqueChildNodes
     }

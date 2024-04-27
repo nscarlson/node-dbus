@@ -46,7 +46,7 @@ export default class Bus extends EventEmitter {
                     return
                 }
 
-                var signalHash = objectPath + ':' + interfaceName
+                const signalHash = objectPath + ':' + interfaceName
 
                 if (this.signalHandlers[signalHash]) {
                     const newArgs = [signalName].concat(args)
@@ -107,8 +107,8 @@ export default class Bus extends EventEmitter {
         this.DBus.signalHandlers[this.connection.uniqueName] = this
 
         // Reregister signal handler
-        for (var hash in this.interfaces) {
-            var iface = this.interfaces[hash]
+        for (const hash in this.interfaces) {
+            const iface = this.interfaces[hash]
 
             this.registerSignalHandler(
                 iface.serviceName,
@@ -129,7 +129,7 @@ export default class Bus extends EventEmitter {
         callback: Callback,
     ) => {
         if (!this.connected) {
-            process.nextTick(function () {
+            process.nextTick(() => {
                 callback(new Error('Bus is no longer connected'))
             })
 
@@ -147,12 +147,12 @@ export default class Bus extends EventEmitter {
             10000,
             [],
             (err: any, introspect: any) => {
-                var obj = this._parseIntrospectSource(introspect)
+                const obj = this._parseIntrospectSource(introspect)
+
                 if (!obj) {
                     if (callback) {
                         callback(new Error('No introspectable'))
                     }
-
                     return
                 }
 
@@ -294,7 +294,7 @@ export default class Bus extends EventEmitter {
                 "'",
         )
 
-        process.nextTick(function () {
+        process.nextTick(() => {
             if (callback) callback()
         })
     }

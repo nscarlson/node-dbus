@@ -50,14 +50,14 @@ export default class DBus {
         }
 
         // Get a connection
-        var bus = this.getBus(busName)
+        const bus = this.getBus(busName)
 
         if (!serviceName) {
             _serviceName = bus.connection.uniqueName
         }
 
         // Create service
-        var service = new Service(bus, _serviceName)
+        const service = new Service(bus, _serviceName)
         this.serviceMap[serviceHash] = service
 
         if (serviceName) {
