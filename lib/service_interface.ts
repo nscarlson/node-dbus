@@ -33,7 +33,7 @@ export default class ServiceInterface extends EventEmitter {
         }
 
         if (opts?.in?.length) {
-            const argSignature: string[] = []
+            const argSignature: any[] = []
 
             for (const opt of opts.in) {
                 for (const index in opt) {

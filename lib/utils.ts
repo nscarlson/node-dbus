@@ -1,6 +1,14 @@
-import DBusError from './error'
+import { DBusSignatureType, defineType } from 'dbus'
 
-export const Define = (type: any, name?: string) => {
+type signatureDefinition = {
+    type: defineType
+    name: string
+}
+
+export const Define = (
+    type: any,
+    name?: string,
+): { type: DBusSignatureType; name?: string } => {
     const field = {
         ...(!!name && { name }),
         type: Signature(type),
@@ -9,18 +17,9 @@ export const Define = (type: any, name?: string) => {
     return field
 }
 
-type SignatureType =
-    | 'Auto'
-    | typeof String
-    | typeof Number
-    | typeof Boolean
-    | typeof Array
-    | typeof Object
-    | string
-
-export const Signature = (type: SignatureType) => {
+export const Signature = (type: defineType): DBusSignatureType => {
     const nodeTypes = ['Auto', String, Number, Boolean, Array, Object]
-    const dbusTypes = ['v', 's', 'd', 'b', 'av', 'a{sv}']
+    const dbusTypes: DBusSignatureType[] = ['v', 's', 'd', 'b', 'av', 'a{sv}']
 
     return nodeTypes.indexOf(type) !== -1
         ? dbusTypes[nodeTypes.indexOf(type)]

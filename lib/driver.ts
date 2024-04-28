@@ -1,8 +1,12 @@
-import DBus, { getBus, registerService } from 'dbus'
+import DBus from './dbus'
 
-const bus1 = getBus('session')
+const dbus = new DBus()
+const bus1 = dbus.getBus('session')
 
-const dbusService = registerService('session', 'nodejs.dbus.ExampleService')
+const dbusService = dbus.registerService(
+    'session',
+    'nodejs.dbus.ExampleService',
+)
 const object = dbusService.createObject('/nodejs/dbus/ExampleService')
 const serviceInterface = object.createInterface(
     'nodejs.dbus.ExampleService.Interface1',
@@ -10,8 +14,8 @@ const serviceInterface = object.createInterface(
 
 serviceInterface.addMethod(
     'MakeError',
-    { out: DBus.Define(String) },
-    function (callback) {
+    { out: [dbus.Define(String)] },
+    (callback: () => any) => {
         callback(
             // @ts-ignore
             DBus.Error('nodejs.dbus.ExampleService.ErrorTest', 'Some error'),
@@ -21,8 +25,8 @@ serviceInterface.addMethod(
 
 serviceInterface.addMethod(
     'SendObject',
-    { in: [DBus.Define(Object)], out: DBus.Define(Object) },
-    function (obj, callback) {
+    { in: [dbus.Define(Object)], out: [dbus.Define(Object)] },
+    (obj: any, callback: any) => {
         callback(null, obj)
     },
 )

@@ -7,17 +7,23 @@ declare module 'dbus' {
     export type busType = 'session' | 'system'
     export type defineType =
         | 'Auto'
-        | String
-        | Number
-        | Boolean
-        | Array<any>
-        | Object
+        | typeof String
+        | typeof Number
+        | typeof Boolean
+        | typeof Array
+        | typeof Object
+        | string
+
+    export type DBusSignatureType = 'v' | 's' | 'd' | 'b' | 'av' | 'a{sv}'
 
     export type interfaceMethodByName = { [key: string]: any }
 
     export function getBus(type: busType): DBusConnection
 
-    export function Define(type: defineType, name?: string): string
+    export function Define(
+        type: defineType,
+        name?: string,
+    ): { type: DBusSignatureType; name: string }
     export function DBusError(name: string, message: string): void
 
     export function registerService(
