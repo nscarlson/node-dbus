@@ -11,7 +11,7 @@ export default class Bus extends EventEmitter {
         super()
 
         this._dbus = _dbus
-        this.DBus = DBus
+        this.dbus = dbus
         this.busName = busName
         this.signalHandlers = {}
         this.signalEnable = false
@@ -26,9 +26,10 @@ export default class Bus extends EventEmitter {
                 break
         }
 
-        this.on(
-            'signal',
-            (
+        if (this.connected && this?.connection?.uniqueBusName) {
+            // Register signal handler of this connection
+            // TODO: type the signal handler
+            this.signalHandlers[this.connection.uniqueName] = (
                 uniqueBusName: string,
                 sender: any,
                 objectPath: string,
@@ -54,18 +55,19 @@ export default class Bus extends EventEmitter {
 
                     interfaceObj.emit(...newArgs)
                 }
-            },
-        )
+            }
 
-        // Register signal handler of this connection
-        this.DBus.signalHandlers[this.connection.uniqueName] = this
-        this.DBus.enableSignal()
+            this.on('signal', this.signalHandlers[this.connection.uniqueName])
+        }
+
+        this.dbus.enableSignal()
 
         this.interfaces = {}
     }
+
     _dbus
     connection: any
-    DBus: any
+    dbus: DBus
     busName: 'system' | 'session'
     signalHandlers: Record<string, any>
     signalEnable: boolean
@@ -76,7 +78,7 @@ export default class Bus extends EventEmitter {
     }
 
     disconnect = (callback?: Callback) => {
-        delete this.DBus.signalHandlers[this.connection.uniqueName]
+        delete this.dbus.signalHandlers[this.connection.uniqueName]
 
         this._dbus.releaseBus(this.connection)
 
@@ -89,7 +91,7 @@ export default class Bus extends EventEmitter {
 
     reconnect = (callback?: Callback) => {
         if (this.connection) {
-            delete this.DBus.signalHandlers[this.connection.uniqueName]
+            delete this.dbus.signalHandlers[this.connection.uniqueName]
 
             this._dbus.releaseBus(this.connection)
         }
@@ -104,7 +106,7 @@ export default class Bus extends EventEmitter {
                 break
         }
 
-        this.DBus.signalHandlers[this.connection.uniqueName] = this
+        this.dbus.signalHandlers[this.connection.uniqueName] = this
 
         // Reregister signal handler
         for (const hash in this.interfaces) {

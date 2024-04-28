@@ -11,9 +11,10 @@ type BusName = 'session' | 'system'
 export class DBus {
     constructor() {
         this.Error = Error
+        this.enabledSignal = false
     }
 
-    enabledSignal = false
+    enabledSignal: boolean
     Error
     serviceMap: any = {}
     signalHandlers: Record<string, EventEmitter> = {}

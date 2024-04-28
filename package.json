@@ -34,7 +34,7 @@
         "test": "jest --verbose",
         "build:release": "node-gyp configure build",
         "build:debug": "node-gyp configure build --debug",
-        "build:ts": "tsc -b"
+        "build": "tsc -b"
     },
     "dependencies": {
         "minimist": "1.2.5"
