@@ -4,16 +4,29 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 declare module 'dbus' {
     export class DBus {
-        constructor(type: busType)
+        constructor()
 
         connect(): DBusConnection
         Define(
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
+        getBus(busName: busType): Bus
         registerService(busName: busType, serviceName: string): DBusService
-        // Example method
         sendMessage(message: string): void
+    }
+
+    export default DBus
+
+    export class Bus {
+        constructor(_dbus: any, dbus: DBus, busName: busType)
+
+        getInterface(
+            serviceName: string,
+            objectPath: string,
+            interfaceName: string,
+            callback: Callback,
+        ): void
     }
 
     export type Callback = (...args: any) => any

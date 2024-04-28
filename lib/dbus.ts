@@ -8,7 +8,7 @@ import Error from './error'
 
 type BusName = 'session' | 'system'
 
-export class DBus {
+export default class DBus {
     constructor() {
         this.Error = Error
         this.enabledSignal = false
@@ -108,5 +108,3 @@ export class DBus {
 
     Signature = Utils.Signature
 }
-
-export default DBus

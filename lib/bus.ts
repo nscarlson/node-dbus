@@ -2,12 +2,12 @@ import EventEmitter from 'node:events'
 import Interface from './interface'
 import DBusError from './error'
 import DBus from './dbus'
+import { busType } from 'dbus'
 
-type BusName = 'session' | 'system'
 type Callback = (...args: any) => any
 
 export default class Bus extends EventEmitter {
-    constructor(_dbus: any, dbus: DBus, busName: BusName) {
+    constructor(_dbus: any, dbus: DBus, busName: busType) {
         super()
 
         this._dbus = _dbus

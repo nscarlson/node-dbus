@@ -31,10 +31,10 @@
     "scripts": {
         "node-gyp": "node_modules/.bin/node-gyp",
         "install": "npm run build:release",
-        "test": "jest --verbose",
+        "test": "jest --verbose --detectOpenHandles",
         "build:release": "node-gyp configure build",
-        "build:debug": "node-gyp configure build --debug",
-        "build": "tsc -b"
+        "build:dev": "node-gyp configure build --debug",
+        "build": "tsc --build --verbose --force && yarn node-gyp rebuild"
     },
     "dependencies": {
         "minimist": "1.2.5"
