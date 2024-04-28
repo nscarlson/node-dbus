@@ -1,4 +1,4 @@
-const _dbus = require('../build/Release/dbus.node')
+const _dbus = require('../Release/dbus.node')
 
 import EventEmitter from 'node:events'
 import Utils from './utils'
@@ -8,7 +8,7 @@ import Error from './error'
 
 type BusName = 'session' | 'system'
 
-export default class DBus {
+export class DBus {
     constructor() {
         this.Error = Error
     }
@@ -107,3 +107,5 @@ export default class DBus {
 
     Signature = Utils.Signature
 }
+
+export default DBus

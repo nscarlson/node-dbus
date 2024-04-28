@@ -1,4 +1,5 @@
-const EventEmitter = require('events')
+import EventEmitter from 'node:events'
+
 const service = jest.createMockFromModule('./service')
 
 class Service extends EventEmitter {

@@ -37,11 +37,11 @@ export default class Interface extends EventEmitter {
      * @param callback
      * @returns
      */
-    init = (callback: Callback) => {
+    init = (callback: Callback): Callback | undefined => {
         for (const methodName in this.object['method']) {
             this.methods[methodName] = ((method, signature) => {
-                return () => {
-                    const allArgs = Array.prototype.slice.call(arguments)
+                return (...args: any) => {
+                    const allArgs = [...args]
                     const interfaceIn = this.object.method[method].in
                     const dbusArgs = allArgs.slice(0, interfaceIn.length)
                     const restArgs = allArgs.slice(interfaceIn.length)

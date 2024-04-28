@@ -49,10 +49,10 @@ export default class Bus extends EventEmitter {
                 const signalHash = objectPath + ':' + interfaceName
 
                 if (this.signalHandlers[signalHash]) {
-                    const newArgs = [signalName].concat(args)
+                    const newArgs = [signalName, ...args]
                     const interfaceObj = this.signalHandlers[signalHash]
 
-                    interfaceObj.emit(newArgs)
+                    interfaceObj.emit(...newArgs)
                 }
             },
         )

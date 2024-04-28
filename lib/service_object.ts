@@ -1,7 +1,7 @@
 import Service from './service'
 import ServiceInterface from './service_interface'
 
-const Utils = require('./utils')
+import Utils from './utils'
 
 export default class ServiceObject {
     constructor(service: Service, objectPath: string) {
@@ -155,10 +155,10 @@ export default class ServiceObject {
         return this.interfaces[interfaceName]
     }
 
-    DefineByPropName = (name: string): { name: string; type: string }[] => {
+    DefineByPropName = (name: string): { name?: string; type: string }[] => {
         const def = Utils.Define('Auto', name)
 
-        return def
+        return [def]
 
         // TODO: Determine use cases for the following code
         // This function is only called once from this class's constructor.

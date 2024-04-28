@@ -1,8 +1,8 @@
 import EventEmitter from 'node:events'
 import Utils from './utils'
-import { defineType } from 'dbus'
 import DBusError from './error'
 import ServiceObject from './service_object'
+import { defineType } from 'dbus'
 
 type Callback = (...args: any) => any
 
@@ -112,13 +112,13 @@ export default class ServiceInterface extends EventEmitter {
             return
         }
 
-        let type: defineType
+        let inputType: defineType
 
         if (typeof member.out === 'function') {
             // allow interfaces such as 'org.freedesktop.DBus.Properties' to return out definition according arguments
-            type = member.out.apply(this, [this.name, method, args]).type
+            inputType = member.out.apply(this, [this.name, method, args]).type
         } else if (member.out) {
-            type = member.out.type || ''
+            inputType = member.out.type || ''
         }
 
         // Preparing callback
@@ -144,7 +144,11 @@ export default class ServiceInterface extends EventEmitter {
                     return
                 }
 
-                this.object.service.bus._sendMessageReply(message, value, type)
+                this.object.service.bus._sendMessageReply(
+                    message,
+                    value,
+                    inputType,
+                )
             },
         ])
 
