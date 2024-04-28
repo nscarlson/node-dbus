@@ -9,9 +9,14 @@ export const Define = (type: any, name?: string) => {
     return field
 }
 
-// TODO: enforce types correctly
-// 'Auto' | String | Number | Boolean | Array<any> | Object
-type SignatureType = any
+type SignatureType =
+    | 'Auto'
+    | typeof String
+    | typeof Number
+    | typeof Boolean
+    | typeof Array
+    | typeof Object
+    | string
 
 export const Signature = (type: SignatureType) => {
     const nodeTypes = ['Auto', String, Number, Boolean, Array, Object]

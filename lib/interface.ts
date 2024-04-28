@@ -33,8 +33,11 @@ export default class Interface extends EventEmitter {
         return this.bus.connected
     }
 
+    /**
+     * @param callback
+     * @returns
+     */
     init = (callback: Callback) => {
-        // Initializing methods
         for (const methodName in this.object['method']) {
             this.methods[methodName] = ((method, signature) => {
                 return () => {
@@ -42,6 +45,7 @@ export default class Interface extends EventEmitter {
                     const interfaceIn = this.object.method[method].in
                     const dbusArgs = allArgs.slice(0, interfaceIn.length)
                     const restArgs = allArgs.slice(interfaceIn.length)
+
                     let options = restArgs?.[0] || {}
                     let callback = restArgs[1]
 
