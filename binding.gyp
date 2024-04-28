@@ -15,7 +15,7 @@
         "<!(node -e \"require('nan')\")"
       ],
       'dependencies': [
-        'deps/libexpat/libexpat.gyp:expat'
+        'src/include/libexpat/libexpat.gyp:expat'
       ],
       'conditions': [
         ['OS=="linux"', {
