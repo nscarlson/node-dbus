@@ -3,20 +3,23 @@
 // Definitions by: Luca Lindhorst <https://github.com/lal12>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 declare module 'dbus' {
-    export class DBus {
+    export default class DBus {
         constructor()
 
         connect(): DBusConnection
-        Define(
+        static Define(
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
-        getBus(busName: busType): Bus
+        static getBus(busName: busType): Bus
         registerService(busName: busType, serviceName: string): DBusService
         sendMessage(message: string): void
     }
 
-    export default DBus
+    export class DBusError {
+        constructor(name: string, message: string)
+        toString(): string
+    }
 
     export class Bus {
         constructor(_dbus: any, dbus: DBus, busName: busType)
@@ -30,7 +33,6 @@ declare module 'dbus' {
     }
 
     export type Callback = (...args: any) => any
-    export type DBusError = Error
     export type busType = 'session' | 'system'
     export type defineType =
         | 'Auto'

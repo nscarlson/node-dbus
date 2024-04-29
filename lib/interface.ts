@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import Bus from './bus'
-import DBusError from './error'
+import DBusError from './DBusError'
 
 type Callback = (...args: any) => any
 

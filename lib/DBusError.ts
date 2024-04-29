@@ -27,7 +27,3 @@ export default class DBusError extends Error {
 
     toString = () => 'DBusError: ' + this.message
 }
-
-// DBusError.prototype.toString = function () {
-//     return 'DBusError: ' + this.message
-// }

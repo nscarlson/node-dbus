@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import Interface from './interface'
-import DBusError from './error'
+import DBusError from './DBusError'
 import DBus from './dbus'
 import { busType } from 'dbus'
 

@@ -4,7 +4,7 @@ import EventEmitter from 'node:events'
 import Utils from './utils'
 import Bus from './bus'
 import Service from './service'
-import Error from './error'
+import Error from './DBusError'
 
 type BusName = 'session' | 'system'
 

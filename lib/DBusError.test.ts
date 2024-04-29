@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import DBusError from './error'
+import DBusError from './DBusError'
 
 const baseError = new DBusError(
     'test.dbus.TestService.BaseError',

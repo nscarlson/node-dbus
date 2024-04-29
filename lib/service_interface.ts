@@ -1,6 +1,6 @@
 import EventEmitter from 'node:events'
 import Utils from './utils'
-import DBusError from './error'
+import DBusError from './DBusError'
 import ServiceObject from './service_object'
 import { defineType } from 'dbus'
 
