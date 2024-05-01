@@ -7,11 +7,11 @@ declare module 'dbus' {
         constructor()
 
         connect(): DBusConnection
-        static Define(
+        Define(
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
-        static getBus(busType: BusType): Bus
+        getBus(busType: BusType): Bus
         registerService(busType: BusType, serviceName: string): DBusService
         sendMessage(message: string): void
     }

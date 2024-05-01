@@ -34,7 +34,7 @@
         "test": "jest --verbose --detectOpenHandles",
         "build:release": "node-gyp configure build",
         "build:dev": "node-gyp configure build --debug",
-        "build": "tsc --build --verbose --force && yarn node-gyp rebuild"
+        "build": "tsc --build --verbose --force"
     },
     "dependencies": {
         "minimist": "1.2.5"
