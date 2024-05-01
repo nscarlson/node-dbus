@@ -1,4 +1,4 @@
-import { DBusSignatureType, defineType } from 'dbus'
+import { Callback, DBusSignatureType, defineType } from 'dbus'
 
 type signatureDefinition = {
     type: defineType
@@ -26,68 +26,72 @@ export const Signature = (type: defineType): DBusSignatureType => {
         : 'v'
 }
 
-export const ForEachAsync = (
-    arr: any[],
-    callback: (...args: any) => any,
-    complete: (...args: any) => any,
+// export const ForEachAsync = (
+//     arr: any[],
+//     callback: (...args: any) => any,
+//     complete: (...args: any) => any,
+// ) => {
+//     try {
+//         const next = (index: number, length: number) => {
+//             if (index >= length) {
+//                 if (complete) {
+//                     complete(true)
+//                 }
+
+//                 return
+//             }
+
+//             const _next = (stop?: boolean) => {
+//                 if (stop === false) {
+//                     if (complete) {
+//                         complete(false)
+//                     }
+
+//                     return
+//                 }
+
+//                 if (ret === false) {
+//                     if (complete) {
+//                         complete(false)
+//                     }
+
+//                     return
+//                 }
+
+//                 next(index + 1, length)
+//             }
+
+//             const ret = callback(arr[index], index, arr, _next)
+
+//             if (ret != true) {
+//                 _next()
+//             }
+//         }
+
+//         // Base case, call with initial index 0 and array length
+//         next(0, arr.length)
+//     } catch (err) {
+//         throw new Error('ForEachAsync: ' + (err as Error).message)
+//     }
+// }
+
+const ForEachAsync = (
+    arr: Array<any>,
+    callback: Callback,
+    complete: Callback,
 ) => {
     try {
-        const next = (index: number, length: number) => {
-            if (index >= length) {
-                if (complete) {
-                    complete(true)
-                }
+        let index = 0
 
-                return
-            }
-
-            const _next = (stop?: boolean) => {
-                if (stop === false) {
-                    if (complete) {
-                        complete(false)
-                    }
-
-                    return
-                }
-
-                if (ret === false) {
-                    if (complete) {
-                        complete(false)
-                    }
-
-                    return
-                }
-
-                next(index + 1, length)
-            }
-
-            const ret = callback(arr[index], index, arr, _next)
-
-            if (ret != true) {
-                _next()
-            }
+        for (const value of arr) {
+            callback(value, index++, arr)
         }
 
-        // Base case, call with initial index 0 and array length
-        next(0, arr.length)
+        complete(true)
     } catch (err) {
         throw new Error('ForEachAsync: ' + (err as Error).message)
     }
 }
-
-// const ForEachAsync = (arr, callback, complete) => {
-//     try {
-//         let index = 0
-
-//         for (const value of arr) {
-//             callback(value, index++, arr)
-//         }
-
-//         complete(true)
-//     } catch (err) {
-//         throw new Error('ForEachAsync: ' + err.message)
-//     }
-// }
 
 export default {
     Define,

@@ -11,8 +11,8 @@ declare module 'dbus' {
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
-        static getBus(busName: busType): Bus
-        registerService(busName: busType, serviceName: string): DBusService
+        static getBus(busType: BusType): Bus
+        registerService(busType: BusType, serviceName: string): DBusService
         sendMessage(message: string): void
     }
 
@@ -22,7 +22,7 @@ declare module 'dbus' {
     }
 
     export class Bus {
-        constructor(_dbus: any, dbus: DBus, busName: busType)
+        constructor(_dbus: any, dbus: DBus, busType: BusType)
 
         getInterface(
             serviceName: string,
@@ -33,7 +33,7 @@ declare module 'dbus' {
     }
 
     export type Callback = (...args: any) => any
-    export type busType = 'session' | 'system'
+    export type BusType = 'session' | 'system'
     export type defineType =
         | 'Auto'
         | typeof String
@@ -47,7 +47,7 @@ declare module 'dbus' {
 
     export type interfaceMethodByName = { [key: string]: any }
 
-    export function getBus(type: busType): DBusConnection
+    export function getBus(type: BusType): DBusConnection
 
     export function DBusError(name: string, message: string): void
 
