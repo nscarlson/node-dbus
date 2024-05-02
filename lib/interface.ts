@@ -1,12 +1,12 @@
 import EventEmitter from 'node:events'
-import Bus from './bus'
+import DBusConnection from './DBusConnection'
 import DBusError from './DBusError'
 
 type Callback = (...args: any) => any
 
 export default class Interface extends EventEmitter {
     constructor(
-        bus: Bus,
+        dbusConnection: DBusConnection,
         serviceName: string,
         objectPath: string,
         interfaceName: string,
@@ -14,7 +14,7 @@ export default class Interface extends EventEmitter {
     ) {
         super()
 
-        this.bus = bus
+        this.dbusConnection = dbusConnection
         this.serviceName = serviceName
         this.objectPath = objectPath
         this.interfaceName = interfaceName
@@ -22,7 +22,7 @@ export default class Interface extends EventEmitter {
         this.object = object
     }
 
-    bus: Bus
+    dbusConnection: DBusConnection
     serviceName: string
     objectPath: string
     interfaceName: string
@@ -30,7 +30,7 @@ export default class Interface extends EventEmitter {
     object: Record<string, any>
 
     get connected() {
-        return this.bus.connected
+        return this.dbusConnection.connected
     }
 
     /**
@@ -70,8 +70,8 @@ export default class Interface extends EventEmitter {
                         }
 
                         try {
-                            this.bus.callMethod(
-                                this.bus.connection,
+                            this.dbusConnection.callMethod(
+                                this.dbusConnection.connection,
                                 this.serviceName,
                                 this.objectPath,
                                 this.interfaceName,
@@ -96,7 +96,7 @@ export default class Interface extends EventEmitter {
         const signals = Object.keys(this.object['signal'])
 
         if (signals.length) {
-            this.bus.registerSignalHandler(
+            this.dbusConnection.registerSignalHandler(
                 this.serviceName,
                 this.objectPath,
                 this.interfaceName,
@@ -124,8 +124,8 @@ export default class Interface extends EventEmitter {
             return
         }
 
-        this.bus.callMethod(
-            this.bus.connection,
+        this.dbusConnection.callMethod(
+            this.dbusConnection.connection,
             this.serviceName,
             this.objectPath,
             'org.freedesktop.DBus.Properties',
@@ -149,8 +149,8 @@ export default class Interface extends EventEmitter {
             return
         }
 
-        this.bus.callMethod(
-            this.bus.connection,
+        this.dbusConnection.callMethod(
+            this.dbusConnection.connection,
             this.serviceName,
             this.objectPath,
             'org.freedesktop.DBus.Properties',
@@ -181,8 +181,8 @@ export default class Interface extends EventEmitter {
 
         const propSig = this.object['property'][propertyName].type
 
-        this.bus.callMethod(
-            this.bus.connection,
+        this.dbusConnection.callMethod(
+            this.dbusConnection.connection,
             this.serviceName,
             this.objectPath,
             'org.freedesktop.DBus.Properties',

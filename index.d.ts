@@ -11,7 +11,7 @@ declare module 'dbus' {
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
-        getBus(busType: BusType): Bus
+        getDBusConnection(busType: BusType): DBusConnection
         registerService(busType: BusType, serviceName: string): DBusService
         sendMessage(message: string): void
     }
@@ -47,11 +47,21 @@ declare module 'dbus' {
 
     export type interfaceMethodByName = { [key: string]: any }
 
-    export function getBus(type: BusType): DBusConnection
+    export function getDBusConnection(type: BusType): DBusConnection
 
     export function DBusError(name: string, message: string): void
 
     export interface DBusConnection {
+        callMethod(
+            connection: DBusConnection,
+            serviceName: string,
+            interfaceName: string,
+            methodName: string,
+            str1: string,
+            num1: number,
+            arr: [string],
+            callback: Callback,
+        ): void
         getInterface(
             serviceName: string,
             objectPath: string,
@@ -59,6 +69,13 @@ declare module 'dbus' {
             callback: (err: DBusError, iface: DBusInterface) => void,
         ): void
         disconnect(): void
+        registerSignalHandler(
+            serviceName: string,
+            objectPath: string,
+            interfaceName: string,
+            interfaceObj: Record<string, any>,
+            callback?: Callback,
+        ): void
     }
 
     export interface DBusInterface {
@@ -113,7 +130,10 @@ declare module 'dbus' {
                 setter?: (value: any, done: () => void) => void
             },
         ): void
-        addSignal(name: string, opts: { types: string[] }): void
+        addSignal(
+            name: string,
+            opts: { types: { type: DBusSignatureType; name?: string }[] },
+        ): void
         call(methodName: string, message: any, args: any): void
         emitSignal(name: string, ...values: any[]): void
         update(): void

@@ -1,7 +1,7 @@
 import DBus from './dbus'
 
 const dbus = new DBus()
-const bus1 = dbus.getBus('session')
+const bus1 = dbus.getDBusConnection('session')
 
 const dbusService = dbus.registerService(
     'session',

@@ -2,11 +2,11 @@ const _dbus = require('../Release/dbus.node')
 
 import EventEmitter from 'node:events'
 import Utils from './utils'
-import Bus from './bus'
+import DBusConnection from './DBusConnection'
 import Service from './service'
 import Error from './DBusError'
 
-type BusName = 'session' | 'system'
+export type BusType = 'session' | 'system'
 
 export default class DBus {
     constructor() {
@@ -33,25 +33,25 @@ export default class DBus {
         }
     }
 
-    getBus = (busName: BusName) => {
-        return new Bus(_dbus, this, busName)
+    getDBusConnection = (busType: BusType) => {
+        return new DBusConnection(_dbus, this, busType)
     }
 
-    registerService = (busName: BusName, serviceName: string): any => {
+    registerService = (busType: BusType, serviceName: string): Service => {
         let _serviceName: string = serviceName
 
         let serviceHash = ''
 
         if (serviceName) {
             // Return bus existed
-            serviceHash = busName + ':' + _serviceName
+            serviceHash = busType + ':' + _serviceName
 
             if (this.serviceMap[serviceHash])
                 return this.serviceMap[serviceHash]
         }
 
         // Get a connection
-        const bus = this.getBus(busName)
+        const bus = this.getDBusConnection(busType)
 
         if (!serviceName) {
             _serviceName = bus.connection.uniqueName
@@ -102,7 +102,7 @@ export default class DBus {
 
     Define = Utils.Define
 
-    _requestName = (bus: Bus, serviceName: string) => {
+    _requestName = (bus: DBusConnection, serviceName: string) => {
         _dbus.requestName(bus.connection, serviceName)
     }
 

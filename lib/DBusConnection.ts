@@ -1,22 +1,21 @@
 import EventEmitter from 'node:events'
 import Interface from './interface'
 import DBusError from './DBusError'
-import DBus from './dbus'
-import { BusType } from 'dbus'
+import DBus, { BusType } from './dbus'
 
 type Callback = (...args: any) => any
 
-export default class Bus extends EventEmitter {
-    constructor(_dbus: any, dbus: DBus, busName: BusType) {
+export default class DBusConnection extends EventEmitter {
+    constructor(_dbus: any, dbus: DBus, busType: BusType) {
         super()
 
         this._dbus = _dbus
         this.dbus = dbus
-        this.busName = busName
+        this.busType = busType
         this.signalHandlers = {}
         this.signalEnable = false
 
-        switch (busName) {
+        switch (busType) {
             case 'system':
                 this.connection = _dbus.getBus(0)
                 break
@@ -66,9 +65,9 @@ export default class Bus extends EventEmitter {
     }
 
     _dbus
+    busType: BusType
     connection: any
     dbus: DBus
-    busName: 'system' | 'session'
     signalHandlers: Record<string, any>
     signalEnable: boolean
     interfaces: Record<string, any>
@@ -96,7 +95,7 @@ export default class Bus extends EventEmitter {
             this._dbus.releaseBus(this.connection)
         }
 
-        switch (this.busName) {
+        switch (this.busType) {
             case 'system':
                 this.connection = this._dbus.getBus(0)
                 break
@@ -238,9 +237,18 @@ export default class Bus extends EventEmitter {
         interfaceObj: Record<string, any>,
         callback?: Callback,
     ) => {
+        console.log(
+            'calling registerSignalHandler:',
+            serviceName,
+            objectPath,
+            interfaceName,
+            Object.entries(interfaceObj),
+            callback,
+        )
         this.getUniqueServiceName(serviceName, (err, uniqueName) => {
             // Make a hash
             const signalHash = objectPath + ':' + interfaceName
+
             this.signalHandlers[signalHash] = interfaceObj
 
             // Register interface signal handler
@@ -314,6 +322,8 @@ export default class Bus extends EventEmitter {
     }
 
     callMethod = (...args: any) => {
+        console.log('callMethod args:', args)
+
         args.push(this.createError)
 
         this._dbus.callMethod(args)
