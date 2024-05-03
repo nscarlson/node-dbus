@@ -18,7 +18,7 @@ export default class ServiceObject {
             { out: Utils.Define(String, 'data') },
             (callback) => {
                 this.updateIntrospection()
-                callback(null, this.introspection)
+                callback?.(null, this.introspection)
             },
         )
         this.introspectableInterface.update()
@@ -41,12 +41,12 @@ export default class ServiceObject {
                 const iface = this.interfaces[interfaceName]
 
                 if (!iface) {
-                    callback(new Error("Doesn't support such property"))
+                    callback?.(new Error("Doesn't support such property"))
                     return
                 }
 
                 if (!iface.getProperty(propName, callback))
-                    callback(new Error("Doesn't support such property"))
+                    callback?.(new Error("Doesn't support such property"))
             },
         )
 
@@ -63,12 +63,12 @@ export default class ServiceObject {
                 const iface = this.interfaces[interfaceName]
 
                 if (!iface) {
-                    callback(new Error("Doesn't support such property"))
+                    callback?.(new Error("Doesn't support such property"))
                     return
                 }
 
                 if (!iface.setProperty(propName, value, callback))
-                    callback(new Error("Doesn't support such property"))
+                    callback?.(new Error("Doesn't support such property"))
             },
         )
 
@@ -82,12 +82,12 @@ export default class ServiceObject {
                 const iface = this.interfaces[interfaceName]
 
                 if (!iface) {
-                    callback(new Error("Doesn't have any properties"))
+                    callback?.(new Error("Doesn't have any properties"))
                     return
                 }
 
                 iface.getProperties((err, props) => {
-                    callback(err, props)
+                    callback?.(err, props)
                 })
             },
         )

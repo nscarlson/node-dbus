@@ -65,7 +65,7 @@ export default class Interface extends EventEmitter {
 
                     process.nextTick(() => {
                         if (!this.connected) {
-                            callback(new Error('Bus is no longer connected'))
+                            callback?.(new Error('Bus is no longer connected'))
                             return
                         }
 
@@ -82,7 +82,7 @@ export default class Interface extends EventEmitter {
                                 callback,
                             )
                         } catch (e) {
-                            callback(e)
+                            callback?.(e)
                         }
                     })
                 }
@@ -102,24 +102,20 @@ export default class Interface extends EventEmitter {
                 this.interfaceName,
                 this,
                 () => {
-                    if (callback) {
-                        process.nextTick(callback)
-                    }
+                    process.nextTick(() => callback?.())
                 },
             )
 
             return
         }
 
-        if (callback) {
-            process.nextTick(callback)
-        }
+        process.nextTick(() => callback?.())
     }
 
     getProperties = (callback: Callback) => {
         if (!this.connected) {
             process.nextTick(() => {
-                callback(new Error('Bus is no longer connected'))
+                callback?.(new Error('Bus is no longer connected'))
             })
             return
         }
@@ -134,9 +130,7 @@ export default class Interface extends EventEmitter {
             -1,
             [this.interfaceName],
             (err: DBusError, value: any) => {
-                if (callback) {
-                    callback(err, value)
-                }
+                callback?.(err, value)
             },
         )
     }
@@ -144,7 +138,7 @@ export default class Interface extends EventEmitter {
     getProperty = (propertyName: string, callback: Callback) => {
         if (!this.connected) {
             process.nextTick(() => {
-                callback(new Error('Bus is no longer connected'))
+                callback?.(new Error('Bus is no longer connected'))
             })
             return
         }
@@ -159,9 +153,7 @@ export default class Interface extends EventEmitter {
             10000,
             [this.interfaceName, propertyName],
             (err: DBusError, value: any) => {
-                if (callback) {
-                    callback(err, value)
-                }
+                callback?.(err, value)
             },
         )
     }
@@ -173,7 +165,7 @@ export default class Interface extends EventEmitter {
     ) => {
         if (!this.connected) {
             process.nextTick(() => {
-                callback(new Error('Bus is no longer connected'))
+                callback?.(new Error('Bus is no longer connected'))
             })
 
             return
@@ -191,9 +183,7 @@ export default class Interface extends EventEmitter {
             -1,
             [this.interfaceName, propertyName, value],
             (err: DBusError) => {
-                if (callback) {
-                    callback(err)
-                }
+                callback?.(err)
             },
         )
     }

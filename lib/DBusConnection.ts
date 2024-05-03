@@ -13,7 +13,7 @@ export default class DBusConnection extends EventEmitter {
         this.dbus = dbus
         this.busType = busType
         this.signalHandlers = {}
-        this.signalEnable = false
+        this.enabledSignal = false
 
         switch (busType) {
             case 'system':
@@ -69,7 +69,7 @@ export default class DBusConnection extends EventEmitter {
     connection: any
     dbus: DBus
     signalHandlers: Record<string, any>
-    signalEnable: boolean
+    enabledSignal: boolean
     interfaces: Record<string, any>
 
     get connected() {
@@ -83,9 +83,7 @@ export default class DBusConnection extends EventEmitter {
 
         this.connection = null
 
-        if (callback) {
-            process.nextTick(callback)
-        }
+        process.nextTick(() => callback?.())
     }
 
     reconnect = (callback?: Callback) => {
@@ -119,9 +117,7 @@ export default class DBusConnection extends EventEmitter {
             )
         }
 
-        if (callback) {
-            process.nextTick(callback)
-        }
+        process.nextTick(() => callback?.())
     }
 
     introspect = (
@@ -131,7 +127,7 @@ export default class DBusConnection extends EventEmitter {
     ) => {
         if (!this.connected) {
             process.nextTick(() => {
-                callback(new Error('Bus is no longer connected'))
+                callback?.(new Error('Bus is no longer connected'))
             })
 
             return
@@ -151,15 +147,12 @@ export default class DBusConnection extends EventEmitter {
                 const obj = this._parseIntrospectSource(introspect)
 
                 if (!obj) {
-                    if (callback) {
-                        callback(new Error('No introspectable'))
-                    }
+                    callback?.(new Error('No introspectable'))
+
                     return
                 }
 
-                if (callback) {
-                    callback(err, obj)
-                }
+                callback?.(err, obj)
             },
         )
     }
@@ -179,32 +172,27 @@ export default class DBusConnection extends EventEmitter {
                 serviceName + ':' + objectPath + ':' + interfaceName
             ]
         ) {
-            if (callback)
-                process.nextTick(() => {
-                    callback(
-                        null,
-                        this.interfaces[
-                            serviceName + ':' + objectPath + ':' + interfaceName
-                        ],
-                    )
-                })
+            process.nextTick(() => {
+                callback?.(
+                    null,
+                    this.interfaces[
+                        serviceName + ':' + objectPath + ':' + interfaceName
+                    ],
+                )
+            })
 
             return
         }
 
         this.introspect(serviceName, objectPath, (err, obj) => {
             if (err) {
-                if (callback) {
-                    callback(err)
-                }
+                callback?.(err)
 
                 return
             }
 
             if (!(interfaceName in obj)) {
-                if (callback) {
-                    callback(new Error('No such interface'))
-                }
+                callback?.(new Error('No such interface'))
 
                 return
             }
@@ -223,9 +211,7 @@ export default class DBusConnection extends EventEmitter {
                     serviceName + ':' + objectPath + ':' + interfaceName
                 ] = iface
 
-                if (callback) {
-                    callback(null, iface)
-                }
+                callback?.(null, iface)
             })
         })
     }
@@ -276,7 +262,7 @@ export default class DBusConnection extends EventEmitter {
             -1,
             [serviceName],
             (err: DBusError, uniqueName: string) => {
-                callback(err, uniqueName)
+                callback?.(err, uniqueName)
             },
         )
     }
@@ -288,8 +274,8 @@ export default class DBusConnection extends EventEmitter {
         callback?: Callback,
     ) => {
         // Initializing signal if it wasn't enabled before
-        if (!this.signalEnable) {
-            this.signalEnable = true
+        if (!this.enabledSignal) {
+            this.enabledSignal = true
             this._dbus.addSignalFilter(this.connection, "type='signal'")
         }
 

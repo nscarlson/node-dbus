@@ -16,7 +16,7 @@ serviceInterface.addMethod(
     'MakeError',
     { out: [dbus.Define(String)] },
     (callback: () => any) => {
-        callback(
+        callback?.(
             // @ts-ignore
             DBus.Error('nodejs.dbus.ExampleService.ErrorTest', 'Some error'),
         )
@@ -27,7 +27,7 @@ serviceInterface.addMethod(
     'SendObject',
     { in: [dbus.Define(Object)], out: [dbus.Define(Object)] },
     (obj: any, callback: any) => {
-        callback(null, obj)
+        callback?.(null, obj)
     },
 )
 

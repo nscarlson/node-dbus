@@ -174,9 +174,7 @@ export default class ServiceInterface extends EventEmitter {
 
         prop.getter.apply(this, [
             (err: DBusError, value: any) => {
-                if (callback) {
-                    callback(err, value)
-                }
+                callback?.(err, value)
             },
         ])
 
@@ -299,7 +297,7 @@ export default class ServiceInterface extends EventEmitter {
 
         args.push((err: DBusError) => {
             // Completed
-            callback(err)
+            callback?.(err)
         })
 
         prop.setter.apply(this, args)
@@ -332,9 +330,7 @@ export default class ServiceInterface extends EventEmitter {
                 return true
             },
             () => {
-                if (callback) {
-                    callback(null, properties)
-                }
+                callback?.(null, properties)
             },
         )
     }
