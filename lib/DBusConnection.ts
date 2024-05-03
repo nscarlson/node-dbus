@@ -305,7 +305,7 @@ export default class DBusConnection extends EventEmitter {
         )
 
         process.nextTick(() => {
-            if (callback) callback()
+            callback?.()
         })
     }
 

@@ -26,7 +26,10 @@ export default class ServiceInterface extends EventEmitter {
     introspection: string | (string | string[])[]
     methods: Record<string, any>
     properties: Record<string, any>
-    signals: Record<string, any>
+    signals: Record<
+        string,
+        { types: { type: DBusSignatureType; name?: string }[] }
+    >
 
     addMethod = (methodName: string, opts: any, handler: Handler) => {
         let methodObj: Record<string, any> = {
@@ -254,6 +257,7 @@ export default class ServiceInterface extends EventEmitter {
 
         // Signal
         for (const signalName in this.signals) {
+            console.log('[update] updating signals:', this.signals)
             const signal = this.signals[signalName]
 
             introspection.push('<signal name="' + signalName + '">')
@@ -262,7 +266,7 @@ export default class ServiceInterface extends EventEmitter {
             if (signal.types) {
                 for (const index in signal.types) {
                     const arg = signal.types[index]
-                    if (arg.name)
+                    if (arg.name) {
                         introspection.push(
                             '<arg type="' +
                                 arg.type +
@@ -270,7 +274,7 @@ export default class ServiceInterface extends EventEmitter {
                                 arg.name +
                                 '"/>',
                         )
-                    else introspection.push('<arg type="' + arg.type + '"/>')
+                    } else introspection.push('<arg type="' + arg.type + '"/>')
                 }
             }
 
