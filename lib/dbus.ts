@@ -30,6 +30,8 @@ export default class DBus {
                     this.signalHandlers[uniqueName].emit(args)
                 }
             })
+        } else {
+            console.info('[DBus.enableSignal]', 'signal already enabled')
         }
     }
 
