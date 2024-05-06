@@ -1,7 +1,8 @@
 import EventEmitter from 'node:events'
 import Interface from './interface'
 import DBusError from './DBusError'
-import DBus, { BusType } from './dbus'
+import DBus from './dbus'
+import { BusType } from './types'
 
 type Callback = (...args: any) => any
 
@@ -16,11 +17,11 @@ export default class DBusConnection extends EventEmitter {
         this.enabledSignal = false
 
         switch (busType) {
-            case 'system':
+            case BusType.system:
                 this.connection = _dbus.getBus(0)
                 break
 
-            case 'session':
+            case BusType.session:
                 this.connection = _dbus.getBus(1)
                 break
         }
@@ -94,11 +95,11 @@ export default class DBusConnection extends EventEmitter {
         }
 
         switch (this.busType) {
-            case 'system':
+            case BusType.system:
                 this.connection = this._dbus.getBus(0)
                 break
 
-            case 'session':
+            case BusType.session:
                 this.connection = this._dbus.getBus(1)
                 break
         }

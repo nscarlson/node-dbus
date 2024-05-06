@@ -3,7 +3,7 @@ import Utils from './utils'
 import DBusError from './DBusError'
 import ServiceObject from './service_object'
 import { defineType } from 'dbus'
-import { DBusSignatureType } from './types'
+import { DBusSignature } from './types'
 
 type Callback = (...args: any) => any
 
@@ -26,10 +26,7 @@ export default class ServiceInterface extends EventEmitter {
     introspection: string | (string | string[])[]
     methods: Record<string, any>
     properties: Record<string, any>
-    signals: Record<
-        string,
-        { types: { type: DBusSignatureType; name?: string }[] }
-    >
+    signals: Record<string, { types: { type: DBusSignature; name?: string }[] }>
 
     addMethod = (methodName: string, opts: any, handler: Handler) => {
         let methodObj: Record<string, any> = {
@@ -80,7 +77,7 @@ export default class ServiceInterface extends EventEmitter {
 
     addSignal = (
         signalName: string,
-        opts: { types: { type: DBusSignatureType; name?: string }[] },
+        opts: { types: { type: DBusSignature; name?: string }[] },
     ) => {
         console.log('adding signal', signalName)
 

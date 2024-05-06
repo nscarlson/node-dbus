@@ -1,14 +1,10 @@
-import { Callback, DBusSignatureType, defineType } from 'dbus'
-
-type signatureDefinition = {
-    type: defineType
-    name: string
-}
+import { Callback, defineType } from 'dbus'
+import { DBusSignature } from './types'
 
 export const Define = (
     type: any,
     name?: string,
-): { type: DBusSignatureType; name?: string } => {
+): { type: DBusSignature; name?: string } => {
     const field = {
         ...(!!name && { name }),
         type: Signature(type),
@@ -17,9 +13,9 @@ export const Define = (
     return field
 }
 
-export const Signature = (type: defineType): DBusSignatureType => {
+export const Signature = (type: defineType): DBusSignature => {
     const nodeTypes = ['Auto', String, Number, Boolean, Array, Object]
-    const dbusTypes: DBusSignatureType[] = ['v', 's', 'd', 'b', 'av', 'a{sv}']
+    const dbusTypes: DBusSignature[] = ['v', 's', 'd', 'b', 'av', 'a{sv}']
 
     return nodeTypes.indexOf(type) !== -1
         ? dbusTypes[nodeTypes.indexOf(type)]

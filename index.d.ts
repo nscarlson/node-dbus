@@ -33,7 +33,10 @@ declare module 'dbus' {
     }
 
     export type Callback = (...args: any) => any
-    export type BusType = 'session' | 'system'
+    export enum BusType {
+        session = 'session',
+        system = 'system',
+    }
     export type defineType =
         | 'Auto'
         | typeof String

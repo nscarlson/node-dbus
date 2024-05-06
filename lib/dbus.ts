@@ -5,8 +5,7 @@ import Utils from './utils'
 import DBusConnection from './DBusConnection'
 import Service from './service'
 import Error from './DBusError'
-
-export type BusType = 'session' | 'system'
+import { BusType } from './types'
 
 export default class DBus {
     constructor() {
