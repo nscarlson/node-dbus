@@ -2,7 +2,7 @@
 // Project: https://github.com/Shouqun/node-dbus#readme
 // Definitions by: Luca Lindhorst <https://github.com/lal12>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-declare module 'dbus' {
+declare module 'node-dbus' {
     export default class DBus {
         constructor()
 
@@ -33,10 +33,7 @@ declare module 'dbus' {
     }
 
     export type Callback = (...args: any) => any
-    export enum BusType {
-        session = 'session',
-        system = 'system',
-    }
+    export type BusType = 'session' | 'system'
     export type defineType =
         | 'Auto'
         | typeof String

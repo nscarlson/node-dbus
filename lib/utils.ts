@@ -1,5 +1,4 @@
-import { Callback, defineType } from 'dbus'
-import { DBusSignature } from './types'
+import { Callback, DBusSignature, defineType } from './types'
 
 export const Define = (
     type: any,

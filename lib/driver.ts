@@ -2,10 +2,10 @@ import DBus from './dbus'
 import { BusType } from './types'
 
 const dbus = new DBus()
-const bus1 = dbus.getDBusConnection(BusType.session)
+const bus1 = dbus.getDBusConnection('session')
 
 const dbusService = dbus.registerService(
-    BusType.session,
+    'session',
     'nodejs.dbus.ExampleService',
 )
 const object = dbusService.createObject('/nodejs/dbus/ExampleService')

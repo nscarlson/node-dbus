@@ -17,11 +17,11 @@ export default class DBusConnection extends EventEmitter {
         this.enabledSignal = false
 
         switch (busType) {
-            case BusType.system:
+            case 'system':
                 this.connection = _dbus.getBus(0)
                 break
 
-            case BusType.session:
+            case 'session':
                 this.connection = _dbus.getBus(1)
                 break
         }
@@ -95,11 +95,11 @@ export default class DBusConnection extends EventEmitter {
         }
 
         switch (this.busType) {
-            case BusType.system:
+            case 'system':
                 this.connection = this._dbus.getBus(0)
                 break
 
-            case BusType.session:
+            case 'session':
                 this.connection = this._dbus.getBus(1)
                 break
         }

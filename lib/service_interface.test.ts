@@ -3,9 +3,7 @@ import { describe, it, expect, afterEach, beforeEach } from '@jest/globals'
 import ServiceInterface from './service_interface'
 import ServiceObject from './service_object'
 import Service from './service'
-import Bus from './DBusConnection'
 import DBus from './dbus'
-import { BusType } from './types'
 
 describe('ServiceInterface', () => {
     describe('introspection', () => {
@@ -16,7 +14,7 @@ describe('ServiceInterface', () => {
         beforeEach(() => {
             dbus = new DBus()
             service = new Service(
-                dbus.getDBusConnection(BusType.session),
+                dbus.getDBusConnection('session'),
                 'com.wanco.test',
             )
             serviceObject = new ServiceObject(service, '/com/wanco/test/object')
