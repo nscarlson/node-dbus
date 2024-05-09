@@ -1,4 +1,6 @@
-const _dbus = require('../Release/dbus.node')
+const _dbus = require(process.env.NODE_ENV === 'test'
+    ? '../build/Release/dbus.node'
+    : '../Release/dbus.node')
 
 import EventEmitter from 'node:events'
 import Utils from './utils'

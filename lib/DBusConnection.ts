@@ -38,9 +38,9 @@ export default class DBusConnection extends EventEmitter {
                 args: any,
             ) => {
                 if (
-                    objectPath == '/org/freedesktop/DBus/Local' &&
-                    interfaceName == 'org.freedesktop.DBus.Local' &&
-                    signalName == 'Disconnected'
+                    objectPath === '/org/freedesktop/DBus/Local' &&
+                    interfaceName === 'org.freedesktop.DBus.Local' &&
+                    signalName === 'Disconnected'
                 ) {
                     this.reconnect()
 

@@ -126,7 +126,7 @@ export default class ServiceObject {
 
         const childKeys = allKeys.filter(
             (key) =>
-                key.substring(0, prefix.length) == prefix &&
+                key.substring(0, prefix.length) === prefix &&
                 key.length > prefix.length,
         )
 
