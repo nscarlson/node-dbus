@@ -38,7 +38,7 @@ export default class Service extends EventEmitter {
         return this.bus.connected
     }
 
-    createObject = (objectPath: string) => {
+    createObject = (objectPath: string): ServiceObject => {
         if (!this.objects[objectPath])
             this.objects[objectPath] = new ServiceObject(this, objectPath)
 
