@@ -215,10 +215,10 @@ export default class ServiceObject {
             introspection.push('<node name="' + childNodes[i] + '"/>')
         }
 
-        introspection.push('</node>')
+        // introspection.push('</node>')
 
-        console.log('[updateIntrospection]')
-        console.log(introspection.join('\n'))
+        // console.log('[updateIntrospection]')
+        // console.log(introspection.join('\n'))
 
         this.introspection = introspection.join('\n')
     }

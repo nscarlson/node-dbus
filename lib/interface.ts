@@ -92,7 +92,7 @@ export default class Interface extends EventEmitter {
         }
 
         // Initializing signal handler
-        const signals = Object.keys(this.object['signal'])
+        const signals = Object.keys(this?.object?.['signal'] || {})
 
         if (signals.length) {
             this.dbusConnection.registerSignalHandler(

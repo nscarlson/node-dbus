@@ -27,43 +27,39 @@ export default class DBusConnection extends EventEmitter {
                 break
         }
 
-        if (this.connected && this?.connection?.uniqueBusName) {
-            // Register signal handler of this connection
-            // TODO: type the signal handler
-            this.signalHandlers[this.connection.uniqueName] = (
-                uniqueBusName: string,
-                sender: any,
-                objectPath: string,
-                interfaceName: string,
-                signalName: string,
-                args: any,
+        this.on(
+            'signal',
+            (
+                uniqueBusName,
+                sender,
+                objectPath,
+                interfaceName,
+                signalName,
+                args,
             ) => {
                 if (
-                    objectPath === '/org/freedesktop/DBus/Local' &&
-                    interfaceName === 'org.freedesktop.DBus.Local' &&
-                    signalName === 'Disconnected'
+                    objectPath == '/org/freedesktop/DBus/Local' &&
+                    interfaceName == 'org.freedesktop.DBus.Local' &&
+                    signalName == 'Disconnected'
                 ) {
                     this.reconnect()
 
                     return
                 }
 
-                const signalHash = objectPath + ':' + interfaceName
+                var signalHash = objectPath + ':' + interfaceName
 
                 if (this.signalHandlers[signalHash]) {
-                    const newArgs = [signalName, ...args]
-                    const interfaceObj = this.signalHandlers[signalHash]
+                    const newArgs = [signalName].concat(args)
 
-                    interfaceObj.emit(...newArgs)
+                    var interfaceObj = this.signalHandlers[signalHash]
+                    interfaceObj.emit.apply(interfaceObj, newArgs)
                 }
-            }
+            },
+        )
 
-            this.on('signal', this.signalHandlers[this.connection.uniqueName])
-        }
-
+        this.dbus.signalHandlers[this.connection.uniqueName] = this
         this.dbus.enableSignal()
-
-        this.interfaces = {}
     }
 
     _dbus
@@ -72,10 +68,10 @@ export default class DBusConnection extends EventEmitter {
     dbus: DBus
     signalHandlers: Record<string, any>
     enabledSignal: boolean
-    interfaces: Record<string, any>
+    interfaces: Record<string, any> = {}
 
     get connected() {
-        return this.connection !== null
+        return !!this.connection
     }
 
     disconnect = (callback?: Callback) => {
@@ -346,28 +342,8 @@ export default class DBusConnection extends EventEmitter {
         return new DBusError(name, message)
     }
 
-    callMethod = (
-        connection: DBusConnection,
-        serviceName: string,
-        objectPath: string,
-        unknownString: string,
-        methodName: string,
-        definitions:
-            | { type: string; concrete_type: string }
-            | string
-            | string[],
-        ...args: any
-    ) => {
+    callMethod = (...args: any[]) => {
         args.push(this.createError)
-
-        this._dbus.callMethod(
-            connection,
-            serviceName,
-            objectPath,
-            unknownString,
-            methodName,
-            definitions,
-            ...args,
-        )
+        this._dbus.callMethod(...args)
     }
 }
