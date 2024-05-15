@@ -39,33 +39,32 @@ export default class Interface extends EventEmitter {
      */
     init = (callback: Callback): Callback | undefined => {
         for (const methodName in this.object['method']) {
+            console.log('[init] - ')
             this.methods[methodName] = ((method, signature) => {
                 return (...args: any) => {
-                    const allArgs = [...args]
-                    const interfaceIn = this.object.method[method].in
-                    const dbusArgs = allArgs.slice(0, interfaceIn.length)
-                    const restArgs = allArgs.slice(interfaceIn.length)
+                    const interfaceIn = this?.object?.method?.[method]?.in
+                    const dbusArgs = args.slice(0, interfaceIn?.length)
+                    const restArgs = args.slice(interfaceIn?.length)
 
-                    let options = restArgs?.[0] || {}
-                    let callback = restArgs[1]
+                    let methodCallback: Callback =
+                        typeof restArgs?.[0] === 'function'
+                            ? restArgs?.[0]
+                            : restArgs?.[1] || (() => {})
 
-                    if (typeof options === 'function') {
-                        // No options were specified; only a callback.
-                        callback = options
-                        options = {}
-                    }
-
-                    if (!callback) {
-                        callback = () => {}
-                    }
+                    const options =
+                        typeof restArgs?.[0] === 'function'
+                            ? {}
+                            : restArgs?.[0] || {}
 
                     const timeout = options.timeout || -1
-                    const handler = this.methods[method].finish || null
-                    const error = this.methods[method].error || null
+                    // const handler = this.methods[method].finish || null
+                    // const error = this.methods[method].error || null
 
                     process.nextTick(() => {
                         if (!this.connected) {
-                            callback?.(new Error('Bus is no longer connected'))
+                            methodCallback?.(
+                                new Error('Bus is no longer connected'),
+                            )
                             return
                         }
 
@@ -79,10 +78,10 @@ export default class Interface extends EventEmitter {
                                 signature,
                                 timeout,
                                 dbusArgs,
-                                callback,
+                                methodCallback,
                             )
                         } catch (e) {
-                            callback?.(e)
+                            methodCallback?.(e)
                         }
                     })
                 }
@@ -117,6 +116,7 @@ export default class Interface extends EventEmitter {
             process.nextTick(() => {
                 callback?.(new Error('Bus is no longer connected'))
             })
+
             return
         }
 

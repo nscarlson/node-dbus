@@ -31,7 +31,7 @@ export default class DBus {
                 }
             })
         } else {
-            console.info('[DBus.enableSignal]', 'signal already enabled')
+            // console.info('[DBus.enableSignal]', 'signal already enabled')
         }
     }
 

@@ -1,6 +1,7 @@
 import EventEmitter from 'node:events'
 import DBusConnection from './DBusConnection'
 import ServiceObject from './service_object'
+import DBusError from './DBusError'
 
 export default class Service extends EventEmitter {
     constructor(bus: DBusConnection, serviceName: string) {
@@ -39,13 +40,24 @@ export default class Service extends EventEmitter {
     }
 
     createObject = (objectPath: string): ServiceObject => {
-        if (!this.objects[objectPath])
-            this.objects[objectPath] = new ServiceObject(this, objectPath)
+        try {
+            if (!this.connected) {
+                throw new Error('bus is not connected')
+            }
 
-        // Register object
-        this.bus._dbus.registerObjectPath(this.bus.connection, objectPath)
+            if (!this.objects[objectPath])
+                this.objects[objectPath] = new ServiceObject(this, objectPath)
 
-        return this.objects[objectPath]
+            // Register object
+            this.bus._dbus.registerObjectPath(this.bus.connection, objectPath)
+
+            return this.objects[objectPath]
+        } catch (error) {
+            throw new DBusError(
+                '[service.createObject]',
+                (error as Error).message,
+            )
+        }
     }
 
     disconnect = () => {

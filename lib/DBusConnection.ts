@@ -135,13 +135,13 @@ export default class DBusConnection extends EventEmitter {
             return
         }
 
-        console.log(
-            '[bus.introspect]',
-            'introspecting',
-            serviceName,
-            objectPath,
-            typeof callback,
-        )
+        // console.log(
+        //     '[bus.introspect]',
+        //     'introspecting',
+        //     serviceName,
+        //     objectPath,
+        //     typeof callback,
+        // )
 
         // Getting scheme of specific object
         this.callMethod(
@@ -177,25 +177,25 @@ export default class DBusConnection extends EventEmitter {
         interfaceName: string,
         callback: Callback,
     ) => {
-        console.log(
-            '[bus.getInterface]',
-            serviceName,
-            objectPath,
-            interfaceName,
-            typeof callback,
-        )
+        // console.log(
+        //     '[bus.getInterface]',
+        //     serviceName,
+        //     objectPath,
+        //     interfaceName,
+        //     typeof callback,
+        // )
 
         if (
             this.interfaces[
                 serviceName + ':' + objectPath + ':' + interfaceName
             ]
         ) {
-            console.log(
-                '[bus.getInterface]',
-                'interface',
-                interfaceName,
-                'exists',
-            )
+            // console.log(
+            //     '[bus.getInterface]',
+            //     'interface',
+            //     interfaceName,
+            //     'exists',
+            // )
 
             process.nextTick(() => {
                 callback?.(
@@ -209,20 +209,20 @@ export default class DBusConnection extends EventEmitter {
             return
         }
 
-        console.log(
-            '[bus.getInterface]',
-            'interface',
-            interfaceName,
-            'does not exist',
-        )
+        // console.log(
+        //     '[bus.getInterface]',
+        //     'interface',
+        //     interfaceName,
+        //     'does not exist',
+        // )
 
         this.introspect(serviceName, objectPath, (err, obj) => {
-            console.log(
-                '[bus.getInterface]',
-                'introspecting',
-                serviceName,
-                objectPath,
-            )
+            // console.log(
+            //     '[bus.getInterface]',
+            //     'introspecting',
+            //     serviceName,
+            //     objectPath,
+            // )
 
             if (err) {
                 callback?.(err)
@@ -358,8 +358,6 @@ export default class DBusConnection extends EventEmitter {
             | string[],
         ...args: any
     ) => {
-        console.log('[bus.callMethod]', 'introspecting', args)
-
         args.push(this.createError)
 
         this._dbus.callMethod(

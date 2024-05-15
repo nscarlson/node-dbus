@@ -78,20 +78,14 @@ export default class ServiceInterface extends EventEmitter {
         signalName: string,
         opts: { types: { type: DBusSignature; name?: string }[] },
     ) => {
-        console.log('adding signal', signalName)
-
         if (!opts) {
             return
         }
 
         this.signals[signalName] = opts
 
-        console.log('[addSignal]', 'signal added:', this.signals[signalName])
-
         this.on(signalName, () => {
-            console.log('[addSignal]', 'this.on(signalName, () => {}) callback')
             const args = [signalName as any].concat([signalName, opts] as any[])
-            console.log('[addSignal]', 'args:', args)
             this.emitSignal(args)
         })
     }
@@ -251,7 +245,7 @@ export default class ServiceInterface extends EventEmitter {
 
         // Signal
         for (const signalName in this.signals) {
-            console.log('[update] updating signals:', this.signals)
+            // console.log('[update] updating signals:', this.signals)
             const signal = this.signals[signalName]
 
             introspection.push('<signal name="' + signalName + '">')
@@ -333,16 +327,16 @@ export default class ServiceInterface extends EventEmitter {
 
     emitSignal = (...args: any) => {
         const service = this.object.service
-        console.log('[emitSignal]', 'service:', Object.keys(service))
+        // console.log('[emitSignal]', 'service:', Object.keys(service))
 
         if (!service.connected) {
             throw new Error('Service is no longer connected')
         }
 
-        console.log('[emitSignal]', 'still connected')
+        // console.log('[emitSignal]', 'still connected')
 
         const conn = this.object.service.bus.connection
-        console.log('[emitSignal]', 'connection:', Object.keys(conn))
+        // console.log('[emitSignal]', 'connection:', Object.keys(conn))
 
         const objPath = this.object.path
         const interfaceName = this.name
@@ -354,10 +348,10 @@ export default class ServiceInterface extends EventEmitter {
 
         const signal = this.signals[signalName] || null
 
-        console.log('[emitSignal]', 'signal:', signal)
+        // console.log('[emitSignal]', 'signal:', signal)
 
         if (!signal) {
-            console.log('[emitSignal]', 'no matched signal found, returning')
+            // console.log('[emitSignal]', 'no matched signal found, returning')
             return
         }
 
@@ -367,7 +361,7 @@ export default class ServiceInterface extends EventEmitter {
             signatures.push(signal.types[index].type)
         }
 
-        console.log('[emitSignal]', Object.keys(signatures))
+        // console.log('[emitSignal]', Object.keys(signatures))
 
         this.object.service.bus._dbus.emitSignal(
             conn,

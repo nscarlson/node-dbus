@@ -6,6 +6,8 @@ describe('dbus class', () => {
     const dbus = new DBus()
     const bus = dbus.getDBusConnection('session')
 
+    afterAll(() => bus.disconnect())
+
     describe('signals', () => {
         const mockSignalCallback = jest.fn(() => undefined)
 
@@ -31,9 +33,6 @@ describe('dbus class', () => {
         obj.updateIntrospection()
 
         iface1.update()
-        iface1.update()
-        iface1.update()
-        iface1.update()
 
         // bus.getInterface(
         //     'test.dbus.TestService',
@@ -41,6 +40,10 @@ describe('dbus class', () => {
         //     'test.dbus.TestService.Interface1',
         //     () => {},
         // )
+
+        afterAll(() => {
+            service.disconnect()
+        })
 
         it('execute a signal handler when the signal is fired', (done) => {
             iface1.on('pump', mockSignalCallback)

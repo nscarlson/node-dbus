@@ -36,13 +36,13 @@ serviceInterface.addMethod(
 serviceInterface.update()
 
 // @ts-ignore
-serviceInterface.call(
-    'SendObject',
-    [
-        {
-            name: 'Fred',
-            email: 'cfsghost@gmail.com',
-        },
-    ],
-    'testmsg',
-)
+// serviceInterface.call(
+//     'SendObject',
+//     [
+//         {
+//             name: 'Fred',
+//             email: 'cfsghost@gmail.com',
+//         },
+//     ],
+//     'testmsg',
+// )

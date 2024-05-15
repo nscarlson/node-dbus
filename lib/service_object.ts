@@ -144,13 +144,20 @@ export default class ServiceObject {
     }
 
     createInterface = (interfaceName: string): ServiceInterface => {
-        if (!this.interfaces[interfaceName])
+        // console.log('[createInterface]')
+
+        // console.log('[createInterface]', Object.keys(this.interfaces))
+
+        if (!this.interfaces[interfaceName]) {
             this.interfaces[interfaceName] = new ServiceInterface(
                 this,
                 interfaceName,
             )
 
-        this.interfaces[interfaceName].update()
+            this.interfaces[interfaceName].update()
+        }
+
+        // console.log('[createInterface]', Object.keys(this.interfaces))
 
         return this.interfaces[interfaceName]
     }
@@ -209,6 +216,9 @@ export default class ServiceObject {
         }
 
         introspection.push('</node>')
+
+        console.log('[updateIntrospection]')
+        console.log(introspection.join('\n'))
 
         this.introspection = introspection.join('\n')
     }
