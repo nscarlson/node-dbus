@@ -7,16 +7,11 @@ import DBus from './dbus'
 
 describe('ServiceInterface', () => {
     describe('introspection', () => {
-        let dbus: DBus
         let service: Service
         let serviceObject: ServiceObject
 
         beforeEach(() => {
-            dbus = new DBus()
-            service = new Service(
-                dbus.getDBusConnection('session'),
-                'com.wanco.test',
-            )
+            service = new Service(DBus.getBus('session'), 'com.wanco.test')
             serviceObject = new ServiceObject(service, '/com/wanco/test/object')
         })
 
@@ -42,8 +37,8 @@ describe('ServiceInterface', () => {
             serviceInterface.addMethod(
                 'SendObject',
                 {
-                    in: [dbus.Define(Object), 'inputobject'],
-                    out: [dbus.Define(Object), 'outputobject'],
+                    in: [DBus.Define(Object), 'inputobject'],
+                    out: [DBus.Define(Object), 'outputobject'],
                 },
                 (obj: any, callback: any) => {
                     console.log('yo, I received a message:', obj)
@@ -61,7 +56,7 @@ describe('ServiceInterface', () => {
             // )
 
             serviceInterface.addSignal('test_signal', {
-                types: [dbus.Define(Object, 'book')],
+                types: [DBus.Define(Object, 'book')],
             })
 
             serviceInterface.addListener('test_signal', (...args: any) =>

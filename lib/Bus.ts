@@ -4,15 +4,15 @@ import DBusError from './DBusError'
 import DBus from './dbus'
 import { BusType, DBusSignature } from './types'
 import { defineType } from 'node-dbus'
+import ServiceInterface from './service_interface'
 
 type Callback = (...args: any) => any
 
-export default class DBusConnection extends EventEmitter {
+export default class Bus extends EventEmitter {
     constructor(_dbus: any, dbus: DBus, busType: BusType) {
         super()
 
         this._dbus = _dbus
-        this.dbus = dbus
         this.busType = busType
         this.signalHandlers = {}
         this.enabledSignal = false
@@ -58,24 +58,23 @@ export default class DBusConnection extends EventEmitter {
             },
         )
 
-        this.dbus.signalHandlers[this.connection.uniqueName] = this
-        this.dbus.enableSignal()
+        DBus.signalHandlers[this.connection.uniqueName] = this
+        DBus.enableSignal()
     }
 
     _dbus
     busType: BusType
     connection: any
-    dbus: DBus
     signalHandlers: Record<string, any>
     enabledSignal: boolean
-    interfaces: Record<string, any> = {}
+    interfaces: Record<string, Interface> = {}
 
     get connected() {
         return !!this.connection
     }
 
     disconnect = (callback?: Callback) => {
-        delete this.dbus.signalHandlers[this.connection.uniqueName]
+        delete DBus.signalHandlers[this.connection.uniqueName]
 
         this._dbus.releaseBus(this.connection)
 
@@ -86,7 +85,7 @@ export default class DBusConnection extends EventEmitter {
 
     reconnect = (callback?: Callback) => {
         if (this.connection) {
-            delete this.dbus.signalHandlers[this.connection.uniqueName]
+            delete DBus.signalHandlers[this.connection.uniqueName]
 
             this._dbus.releaseBus(this.connection)
         }
@@ -101,7 +100,7 @@ export default class DBusConnection extends EventEmitter {
                 break
         }
 
-        this.dbus.signalHandlers[this.connection.uniqueName] = this
+        DBus.signalHandlers[this.connection.uniqueName] = this
 
         // Reregister signal handler
         for (const hash in this.interfaces) {
@@ -173,26 +172,21 @@ export default class DBusConnection extends EventEmitter {
         interfaceName: string,
         callback: Callback,
     ) => {
-        // console.log(
-        //     '[bus.getInterface]',
-        //     serviceName,
-        //     objectPath,
-        //     interfaceName,
-        //     typeof callback,
-        // )
+        console.log(
+            '[bus.getInterface]',
+            serviceName,
+            objectPath,
+            interfaceName,
+            typeof callback,
+        )
+
+        console.log(Object.keys(this.interfaces))
 
         if (
             this.interfaces[
                 serviceName + ':' + objectPath + ':' + interfaceName
             ]
         ) {
-            // console.log(
-            //     '[bus.getInterface]',
-            //     'interface',
-            //     interfaceName,
-            //     'exists',
-            // )
-
             process.nextTick(() => {
                 callback?.(
                     null,

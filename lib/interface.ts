@@ -1,12 +1,12 @@
 import EventEmitter from 'node:events'
-import DBusConnection from './DBusConnection'
+import Bus from './Bus'
 import DBusError from './DBusError'
 
 type Callback = (...args: any) => any
 
 export default class Interface extends EventEmitter {
     constructor(
-        dbusConnection: DBusConnection,
+        dbusConnection: Bus,
         serviceName: string,
         objectPath: string,
         interfaceName: string,
@@ -22,7 +22,7 @@ export default class Interface extends EventEmitter {
         this.object = object
     }
 
-    dbusConnection: DBusConnection
+    dbusConnection: Bus
     serviceName: string
     objectPath: string
     interfaceName: string
@@ -38,7 +38,7 @@ export default class Interface extends EventEmitter {
      * @returns
      */
     init = (callback: Callback): Callback | undefined => {
-        for (const methodName in this.object['method']) {
+        for (const methodName in this.object?.method) {
             console.log('[init] - ')
             this.methods[methodName] = ((method, signature) => {
                 return (...args: any) => {

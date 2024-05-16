@@ -3,13 +3,11 @@ import DBus from './dbus'
 import Service from './service'
 import ServiceObject from './service_object'
 
-const dbus = new DBus()
-
 let service: Service
 let serviceObject: ServiceObject
 
 // beforeEach(() => {
-//     service = dbus.registerService('session', 'nodejs.dbus.ExampleService')
+//     service = DBus.registerService('session', 'nodejs.dbus.ExampleService')
 //     serviceObject = service.createObject('/nodejs/dbus/ExampleService')
 //     // service.disconnect()
 // })

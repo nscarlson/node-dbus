@@ -1,10 +1,9 @@
 import DBus from './dbus'
 import { BusType } from './types'
 
-const dbus = new DBus()
-const bus1 = dbus.getDBusConnection('session')
+const bus1 = DBus.getBus('session')
 
-const dbusService = dbus.registerService(
+const dbusService = DBus.registerService(
     'session',
     'nodejs.dbus.ExampleService',
 )
@@ -15,7 +14,7 @@ const serviceInterface = object.createInterface(
 
 serviceInterface.addMethod(
     'MakeError',
-    { out: [dbus.Define(String)] },
+    { out: [DBus.Define(String)] },
     (callback: () => any) => {
         callback?.(
             // @ts-ignore
@@ -26,7 +25,7 @@ serviceInterface.addMethod(
 
 serviceInterface.addMethod(
     'SendObject',
-    { in: [dbus.Define(Object)], out: [dbus.Define(Object)] },
+    { in: [DBus.Define(Object)], out: [DBus.Define(Object)] },
     (obj: any, callback: any) => {
         callback?.(null, obj)
     },

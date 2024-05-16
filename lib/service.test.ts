@@ -4,9 +4,7 @@ import DBus from './dbus'
 describe('service', () => {
     describe('connectivity', () => {
         it('connects and disconnects to bus properly', (done) => {
-            const dbus = new DBus()
-
-            const service = dbus.registerService(
+            const service = DBus.registerService(
                 'session',
                 'nodejs.dbus.ExampleService',
             )
@@ -21,9 +19,7 @@ describe('service', () => {
         })
 
         it('throws if disconnected while registering service and successfully registers after reconnect', (done) => {
-            const dbus = new DBus()
-
-            let service = dbus.registerService(
+            let service = DBus.registerService(
                 'session',
                 'nodejs.dbus.ExampleService2',
             )
@@ -34,7 +30,7 @@ describe('service', () => {
                 service.createObject('/nodejs/dbus/ExampleService2')
             }).toThrow('bus is not connected')
 
-            service = dbus.registerService(
+            service = DBus.registerService(
                 'session',
                 'nodejs.dbus.ExampleService3',
             )

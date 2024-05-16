@@ -3,15 +3,14 @@ import DBus from './dbus'
 import { describe, expect, test } from '@jest/globals'
 
 describe('dbus class', () => {
-    const dbus = new DBus()
-    const bus = dbus.getDBusConnection('session')
+    const bus = DBus.getBus('session')
 
     afterAll(() => bus.disconnect())
 
     describe('signals', () => {
         const mockSignalCallback = jest.fn(() => undefined)
 
-        const service = dbus.registerService('session', 'test.dbus.TestService')
+        const service = DBus.registerService('session', 'test.dbus.TestService')
 
         const obj = service.createObject('/test/dbus/TestService')
 
@@ -19,7 +18,7 @@ describe('dbus class', () => {
 
         iface1.addMethod(
             'NoArgs',
-            { out: dbus.Define(String) },
+            { out: DBus.Define(String) },
 
             (callback) => {
                 callback(null, 'result!')
@@ -27,7 +26,7 @@ describe('dbus class', () => {
         )
 
         iface1.addSignal('pump', {
-            types: [dbus.Define(String)],
+            types: [DBus.Define(String)],
         })
 
         obj.updateIntrospection()

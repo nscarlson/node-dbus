@@ -4,30 +4,53 @@ const _dbus = require(process.env.NODE_ENV === 'test'
 
 import EventEmitter from 'node:events'
 import Utils from './utils'
-import DBusConnection from './DBusConnection'
+import Bus from './Bus'
 import Service from './service'
 import Error from './DBusError'
 import { BusType } from './types'
+
 export default class DBus {
-    constructor() {
-        this.Error = Error
-        this.enabledSignal = false
+    private static enabledSignal: boolean = false
+    static Error: Error
+    static serviceMap: Record<string, any> = {}
+    static signalHandlers: Record<string, EventEmitter> = {}
+
+    static {
+        // Dispatch events to service
+        _dbus.setObjectHandler(function (
+            uniqueName: string,
+            sender: unknown,
+            objectPath: unknown,
+            interfaceName: unknown,
+            member: unknown,
+            message: unknown,
+            args: unknown,
+        ) {
+            for (const hash in DBus.serviceMap) {
+                const service = DBus.serviceMap[hash]
+
+                if (service.bus.connection.uniqueName != uniqueName) continue
+
+                // Fire event
+                const newArgs = ['request'].concat(
+                    Array.prototype.slice.call(arguments),
+                )
+                service.emit.apply(service, newArgs)
+
+                break
+            }
+        })
     }
 
-    enabledSignal: boolean
-    Error
-    serviceMap: any = {}
-    signalHandlers: Record<string, EventEmitter> = {}
-
-    enableSignal = () => {
-        if (!this.enabledSignal) {
-            this.enabledSignal = true
+    static enableSignal = () => {
+        if (!DBus.enabledSignal) {
+            DBus.enabledSignal = true
 
             _dbus.setSignalHandler((uniqueName: string) => {
-                if (this.signalHandlers[uniqueName]) {
+                if (DBus.signalHandlers[uniqueName]) {
                     const args: any = ['signal', uniqueName]
 
-                    this.signalHandlers[uniqueName].emit(args)
+                    DBus.signalHandlers[uniqueName].emit(args)
                 }
             })
         } else {
@@ -35,11 +58,14 @@ export default class DBus {
         }
     }
 
-    getDBusConnection = (busType: BusType) => {
-        return new DBusConnection(_dbus, this, busType)
+    static getBus = (busType: BusType) => {
+        return new Bus(_dbus, DBus, busType)
     }
 
-    registerService = (busType: BusType, serviceName: string): Service => {
+    static registerService = (
+        busType: BusType,
+        serviceName: string,
+    ): Service => {
         let _serviceName: string = serviceName
 
         let serviceHash = ''
@@ -48,12 +74,12 @@ export default class DBus {
             // Return bus existed
             serviceHash = busType + ':' + _serviceName
 
-            if (this.serviceMap[serviceHash])
-                return this.serviceMap[serviceHash]
+            if (DBus.serviceMap[serviceHash])
+                return DBus.serviceMap[serviceHash]
         }
 
         // Get a connection
-        const bus = this.getDBusConnection(busType)
+        const bus = DBus.getBus(busType)
 
         if (!serviceName) {
             _serviceName = bus.connection.uniqueName
@@ -61,16 +87,16 @@ export default class DBus {
 
         // Create service
         const service = new Service(bus, _serviceName)
-        this.serviceMap[serviceHash] = service
+        DBus.serviceMap[serviceHash] = service
 
         if (serviceName) {
-            this._requestName(bus, _serviceName)
+            DBus._requestName(bus, _serviceName)
         }
 
         return service
     }
 
-    setObjectHandler = (
+    static setObjectHandler = (
         uniqueName: string,
         sender: any,
         objectPath: string,
@@ -79,8 +105,8 @@ export default class DBus {
         message: any,
         args: any[],
     ) => {
-        for (const hash in this.serviceMap) {
-            const service = this.serviceMap[hash]
+        for (const hash in DBus.serviceMap) {
+            const service = DBus.serviceMap[hash]
 
             if (service.bus.connection.uniqueName != uniqueName) {
                 continue
@@ -102,11 +128,11 @@ export default class DBus {
         }
     }
 
-    Define = Utils.Define
+    static Define = Utils.Define
 
-    _requestName = (bus: DBusConnection, serviceName: string) => {
+    static _requestName = (bus: Bus, serviceName: string) => {
         _dbus.requestName(bus.connection, serviceName)
     }
 
-    Signature = Utils.Signature
+    static Signature = Utils.Signature
 }

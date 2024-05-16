@@ -1,10 +1,10 @@
 import EventEmitter from 'node:events'
-import DBusConnection from './DBusConnection'
+import Bus from './Bus'
 import ServiceObject from './service_object'
 import DBusError from './DBusError'
 
 export default class Service extends EventEmitter {
-    constructor(bus: DBusConnection, serviceName: string) {
+    constructor(bus: Bus, serviceName: string) {
         super()
 
         this.bus = bus
@@ -31,7 +31,7 @@ export default class Service extends EventEmitter {
         )
     }
 
-    bus: DBusConnection
+    bus: Bus
     serviceName: string
     objects: Record<string, any>
 

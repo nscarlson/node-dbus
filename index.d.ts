@@ -4,16 +4,17 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 declare module 'node-dbus' {
     export default class DBus {
-        constructor()
-
-        connect(): DBusConnection
-        Define(
+        static connect(): Bus
+        static Define(
             type: defineType,
             name?: string,
         ): { type: DBusSignatureType; name: string }
-        getDBusConnection(busType: BusType): DBusConnection
-        registerService(busType: BusType, serviceName: string): DBusService
-        sendMessage(message: string): void
+        static getBus(busType: BusType): Bus
+        static registerService(
+            busType: BusType,
+            serviceName: string,
+        ): DBusService
+        static sendMessage(message: string): void
     }
 
     export class DBusError {
@@ -47,13 +48,13 @@ declare module 'node-dbus' {
 
     export type interfaceMethodByName = { [key: string]: any }
 
-    export function getDBusConnection(type: BusType): DBusConnection
+    export function getBus(type: BusType): Bus
 
     export function DBusError(name: string, message: string): void
 
-    export interface DBusConnection {
+    export interface Bus {
         callMethod(
-            connection: DBusConnection,
+            connection: Bus,
             serviceName: string,
             interfaceName: string,
             methodName: string,

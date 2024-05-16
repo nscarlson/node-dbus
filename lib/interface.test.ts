@@ -2,8 +2,7 @@ import { describe } from '@jest/globals'
 import DBus from './dbus'
 
 describe('interface class', () => {
-    const dbus = new DBus()
-    const bus = dbus.getDBusConnection('session')
+    const bus = DBus.getBus('session')
 
     let iface1
 
