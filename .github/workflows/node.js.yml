@@ -3,7 +3,7 @@ name: node.js
 on: [pull_request]
 
 jobs:
-  build:
+  yarn:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,4 +15,5 @@ jobs:
       - name: Install apt dependencies
         run: sudo apt install libdbus-1-dev libglib2.0-dev
       - run: yarn --frozen-lockfile
-      - run: yarn test
+      - name: Run tests
+        run: yarn test

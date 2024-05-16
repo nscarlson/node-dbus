@@ -1,8 +1,11 @@
-const EventEmitter = require('events')
+import EventEmitter from 'node:events'
+
 const service = jest.createMockFromModule('./service')
 
 class Service extends EventEmitter {
     constructor(bus, serviceName) {
+        super()
+
         this.bus = bus
         this.serviceName = serviceName
 
